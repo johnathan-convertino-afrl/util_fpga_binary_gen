@@ -8,10 +8,11 @@ filesets:
     files:
       - xilinx_embeddedsw/lib/sw_apps/zynq_fsbl/src/fsbl.elf : {file_type: user, copyto: ./BOOTFS/}
       - xilinx_uboot/u-boot.elf : {file_type: user, copyto: ./BOOTFS/}
+      - bootbin.bif : {file_type: user, copyto: ./BOOTFS/}
 
   dep:
     depend:
-      - AFRL:utility:create_zynq_boot_bin:1.0.0
+      - AFRL:utility:zynq_boot_bin:1.0.0
       - AFRL:utility:generators:1.0.0
 
 generate:
@@ -42,7 +43,7 @@ generate:
     generator: vpilibmake
     parameters:
       src_dir:   xilinx_uboot
-      make_args: "CROSS_COMPILE=arm-none-eabi-"
+      make_args: "DEVICE_TREE=zynq-zed CROSS_COMPILE=arm-none-eabi-"
 
 
 

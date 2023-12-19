@@ -1,5 +1,8 @@
 ### BUILD UBOOT ###
 
+set script_path [file dirname [info script]]
+write_bitstream -force $script_path/../output_files/prj_top.bit
+
 git pull uboot
 
 select branch
