@@ -1,0 +1,18 @@
+CAPI=2:
+
+name: AFRL:utility:digilent_nexys-a7-100t_binary_gen:1.0.0
+description: Files to help generate base nexys-a7 board items
+
+filesets:
+  src:
+    files:
+      - nexys-a7-100t_system_base.tcl  : {file_type: tclSource}
+      - nexys-a7-100t_system_constr.xdc : {file_type : xdc}
+
+  dep:
+    depend:
+      - AFRL:utility:tcl_helper_check:1.0.0
+    
+targets:
+  default: &default
+    filesets: [src, dep]

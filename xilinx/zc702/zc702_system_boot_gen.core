@@ -1,0 +1,52 @@
+CAPI=2:
+
+name: AFRL:utility:xilinx_zc702_boot_gen:1.0.0
+description: Git pull fsbl and uboot, generate elf files, and copy to BOOTFS folder in build.
+
+filesets:
+  src:
+    files:
+      - xilinx_embeddedsw/lib/sw_apps/zynq_fsbl/src/fsbl.elf : {file_type: user, copyto: ./BOOTFS/}
+      - xilinx_uboot/u-boot.elf : {file_type: user, copyto: ./BOOTFS/}
+
+  dep:
+    depend:
+      - AFRL:utility:create_zynq_boot_bin:1.0.0
+      - AFRL:utility:generators:1.0.0
+
+generate:
+  gen_git_fsbl:
+    generator: git_pull
+    parameters:
+      repo_url: https://github.com/Xilinx/embeddedsw.git
+      repo_dir: xilinx_embeddedsw
+      tag: xilinx_v2022.2
+      patch: fsbl_makefile.patch
+  gen_bin_fsbl:
+    generator: vpilibmake
+    parameters:
+      src_dir:   xilinx_embeddedsw/lib/sw_apps/zynq_fsbl/src
+      make_args: "BOARD=zc702"
+  gen_git_uboot:
+    generator: git_pull
+    parameters:
+      repo_url: https://github.com/Xilinx/u-boot-xlnx.git
+      repo_dir: xilinx_uboot
+      tag: xilinx-v2022.2
+  gen_bin_uboot_setup:
+    generator: vpilibmake
+    parameters:
+      src_dir:   xilinx_uboot
+      make_args: "xilinx_zynq_virt_defconfig"
+  gen_bin_uboot_build:
+    generator: vpilibmake
+    parameters:
+      src_dir:   xilinx_uboot
+      make_args: "CROSS_COMPILE=arm-none-eabi-"
+
+
+
+targets:
+  default: &default
+    filesets: [src, dep]
+    generate: [gen_git_fsbl, gen_bin_fsbl, gen_git_uboot, gen_bin_uboot_setup, gen_bin_uboot_build]

@@ -1,0 +1,19 @@
+CAPI=2:
+
+name: AFRL:utility:intel_a10soc_boot_gen:1.0.0
+description: Files to help generate base a10soc board items
+
+filesets:
+  src:
+    files:
+      - a10soc_system_assign.tcl : {file_type: tclSource}
+      - a10soc_system_base.tcl : {file_type: user, copyto : .}
+
+  dep:
+    depend:
+      - AFRL:utility:tcl_helper_check:1.0.0
+
+targets:
+  default:
+    filesets: [src, dep]
+
