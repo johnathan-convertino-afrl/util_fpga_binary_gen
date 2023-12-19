@@ -6,7 +6,6 @@ description: Git pull fsbl and uboot, generate elf files, and copy to BOOTFS fol
 filesets:
   src:
     files:
-      - xilinx_embeddedsw/lib/sw_apps/zynq_fsbl/src/fsbl.elf : {file_type: user, copyto: ./BOOTFS/}
       - xilinx_uboot/u-boot.elf : {file_type: user, copyto: ./BOOTFS/}
       - bootbin.bif : {file_type: user, copyto: ./BOOTFS/}
 
@@ -16,18 +15,6 @@ filesets:
       - AFRL:utility:generators:1.0.0
 
 generate:
-  gen_git_fsbl:
-    generator: git_pull
-    parameters:
-      repo_url: https://github.com/Xilinx/embeddedsw.git
-      repo_dir: xilinx_embeddedsw
-      tag: xilinx_v2022.2
-      patch: fsbl_makefile.patch
-  gen_bin_fsbl:
-    generator: vpilibmake
-    parameters:
-      src_dir:   xilinx_embeddedsw/lib/sw_apps/zynq_fsbl/src
-      make_args: "BOARD=zed"
   gen_git_uboot:
     generator: git_pull
     parameters:
@@ -50,4 +37,4 @@ generate:
 targets:
   default: &default
     filesets: [src, dep]
-    generate: [gen_git_fsbl, gen_bin_fsbl, gen_git_uboot, gen_bin_uboot_setup, gen_bin_uboot_build]
+    generate: [gen_git_uboot, gen_bin_uboot_setup, gen_bin_uboot_build]

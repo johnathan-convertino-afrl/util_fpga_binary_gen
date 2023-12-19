@@ -16,18 +16,6 @@ filesets:
       - AFRL:utility:generators:1.0.0
 
 generate:
-  gen_git_fsbl:
-    generator: git_pull
-    parameters:
-      repo_url: https://github.com/Xilinx/embeddedsw.git
-      repo_dir: xilinx_embeddedsw
-      tag: xilinx_v2022.2
-      patch: fsbl_makefile.patch
-  gen_bin_fsbl:
-    generator: vpilibmake
-    parameters:
-      src_dir:   xilinx_embeddedsw/lib/sw_apps/zynq_fsbl/src
-      make_args: "BOARD=zc702"
   gen_git_uboot:
     generator: git_pull
     parameters:

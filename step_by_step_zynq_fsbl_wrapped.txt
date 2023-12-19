@@ -1,31 +1,10 @@
-### BUILD UBOOT ###
-
-set script_path [file dirname [info script]]
-write_bitstream -force $script_path/../output_files/prj_top.bit
-
-git pull uboot
-
-select branch
-
-set arch
-
-set compiler
-
-set config
-
-build
-
 ### VIVADO COMMANDS ###
 
 vivado -mode tcl -nolog
 
 open_project AFRL_project_fmcomms2-3_1.0.0.xpr
 
-write_hw_platform -fixed -include_bit -force -file [get_property DIRECTORY [get_projects]]/gen_bootfs/system_wrapper.xsa
-
-open_run impl_1
-
-write_bitstream [get_property DIRECTORY [get_projects]]/gen_bootfs/system_bitstream.bit
+write_hw_platform -fixed -include_bit -force -file [get_property DIRECTORY [get_projects]]/BOOTFS/system_wrapper.xsa
 
 close_design
 
@@ -35,10 +14,10 @@ exit
 
 xsct
 
-platform create -name {fmcomms2_zed} -hw {system_wrapper.xsa} -proc {ps7_cortexa9_0} -os {standalone} -out {/home/convertinoj/Documents/vitis_workspace}
+platform create -name {fmcomms2_zed} -hw {system_wrapper.xsa} -proc {ps7_cortexa9_0} -os {standalone} -out {./BOOTFS}
 platform write
 
-platform read {/home/convertinoj/Documents/vitis_workspace/fmcomms2_zed/platform.spr}
+platform read {./BOOTFS/fmcomms2_zed/platform.spr}
 
 platform active {fmcomms2_zed}
 
@@ -56,7 +35,7 @@ app create -name zynq_fsbl -template {Zynq FSBL} -platform fmcomms2_zed -domain 
 
 make all
 
-bootgen -image output.bif -arch zynq -o /home/convertinoj/Documents/vitis_workspace/BOOT.bin
+bootgen -image output.bif -arch zynq -o ./BOOTFS/BOOT.bin
 
 ### OUTPUT.BIF ####
 //arch = zynq; split = false; format = BIN
