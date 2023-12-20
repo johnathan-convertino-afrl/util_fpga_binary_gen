@@ -6,13 +6,12 @@ description: Git pull fsbl and uboot, generate elf files, and copy to BOOTFS fol
 filesets:
   src:
     files:
-      - xilinx_embeddedsw/lib/sw_apps/zynq_fsbl/src/fsbl.elf : {file_type: user, copyto: ./BOOTFS/}
       - xilinx_uboot/u-boot.elf : {file_type: user, copyto: ./BOOTFS/}
       - bootbin.bif : {file_type: user, copyto: ./BOOTFS/}
 
   dep:
     depend:
-      - AFRL:utility:zynq_boot_bin:1.0.0
+      - AFRL:utility:zynq_boot_gen:1.0.0
       - AFRL:utility:generators:1.0.0
 
 generate:
@@ -26,16 +25,16 @@ generate:
     generator: vpilibmake
     parameters:
       src_dir:   xilinx_uboot
-      make_args: "xilinx_zynq_virt_defconfig"
+      make_args: ["xilinx_zynq_virt_defconfig"]
   gen_bin_uboot_build:
     generator: vpilibmake
     parameters:
       src_dir:   xilinx_uboot
-      make_args: "DEVICE_TREE=zynq-zc702 CROSS_COMPILE=arm-none-eabi-"
+      make_args: ["DEVICE_TREE=zynq-zc702", "CROSS_COMPILE=arm-none-eabi-"]
 
 
 
 targets:
   default: &default
     filesets: [src, dep]
-    generate: [gen_git_fsbl, gen_bin_fsbl, gen_git_uboot, gen_bin_uboot_setup, gen_bin_uboot_build]
+    generate: [gen_git_uboot, gen_bin_uboot_setup, gen_bin_uboot_build]

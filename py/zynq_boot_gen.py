@@ -48,6 +48,20 @@ if len(files_found) == 0:
 pathlib.Path(files_found[0]).replace("BOOTFS/system.bit")
 
 try:
+  subprocess.run(["vivado", "-mode tcl -nolog -nojournal -source export_xsa.tcl"], cwd=str(pathlib.Path.cwd()))
+except subprocess.CalledProcessError as error_code:
+  print("vivado error:", error_code.returncode, error_code.output)
+  exit(1)
+
+try:
+  subprocess.run(["xsct", "zynq_gen_fsbl.tcl"], cwd=str(pathlib.Path.cwd()))
+except subprocess.CalledProcessError as error_code:
+  print("xsct error:", error_code.returncode, error_code.output)
+  exit(1)
+
+pathlib.Path("BOOTFS/vitis/zynq_fsbl/Debug/zynq_fsbl.elf").replace("BOOTFS/fsbl.elf")
+
+try:
   subprocess.run(["bootgen", "-image bootbin.bif -arch zynq -o BOOT.bin"], cwd=str(pathlib.Path.cwd()) + '/' + "BOOTFS")
 except subprocess.CalledProcessError as error_code:
   print("bootgen error:", error_code.returncode, error_code.output)

@@ -1,12 +1,14 @@
 CAPI=2:
 
-name: AFRL:utility:zynq_boot_bin:1.0.0
+name: AFRL:utility:zynq_boot_gen:1.0.0
 description: Generate boot.bin for zynq platforms.
 
 filesets:
   py:
     files:
-      - py/zynq_boot_bin.py: { file_type: user, copyto: . }
+      - py/zynq_boot_gen.py: { file_type: user, copyto: . }
+      - tcl/zynq_gen_fsbl.tcl: { file_type: user, copyto: . }
+      - tcl/export_xsa.tcl: { file_type: user, copyto: . }
     
 targets:
   default:
@@ -17,4 +19,4 @@ targets:
 
 scripts:
   zynq_boot_gen:
-    cmd : [python3, zynq_boot_bin.py]
+    cmd : [python3, zynq_boot_gen.py]
