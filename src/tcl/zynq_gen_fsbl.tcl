@@ -1,10 +1,10 @@
-setws BOOTFS/vitis/
+setws vitis/
 
-platform create -name {zynq} -hw {BOOTFS/system_wrapper.xsa} -proc {ps7_cortexa9_0} -os {standalone} -out {./BOOTFS/vitis}
+platform create -name {zynq} -hw {system_wrapper.xsa} -proc {ps7_cortexa9_0} -os {standalone} -out {./vitis}
 
 platform write
 
-platform read {./BOOTFS/vitis/zynq/platform.spr}
+platform read {./vitis/zynq/platform.spr}
 
 platform active {zynq}
 
