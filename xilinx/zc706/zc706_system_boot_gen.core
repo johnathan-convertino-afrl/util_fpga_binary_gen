@@ -7,7 +7,6 @@ filesets:
   src:
     files:
       - xilinx_uboot/u-boot.elf : {file_type: user, copyto: ./BOOTFS/}
-      - bootbin.bif : {file_type: user, copyto: ./BOOTFS/}
 
   dep:
     depend:

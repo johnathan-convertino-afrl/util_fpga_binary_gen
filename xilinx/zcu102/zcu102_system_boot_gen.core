@@ -8,7 +8,6 @@ filesets:
     files:
       - xilinx_uboot/u-boot.elf : {file_type: user, copyto: ./BOOTFS/}
       - xilinx_atf/build/zynqmp/release/bl31/bl31.elf : {file_type: user, copyto: ./BOOTFS/}
-      - bootbin.bif : {file_type: user, copyto: ./BOOTFS/}
 
   dep:
     depend:

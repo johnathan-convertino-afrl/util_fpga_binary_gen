@@ -10,6 +10,7 @@ filesets:
       - tcl/zynqmp_fsbl_gen.tcl: { file_type: user, copyto: . }
       - tcl/export_xsa.tcl: { file_type: user, copyto: . }
       - uboot_scr/zynqmp/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
+      - bootbin/zynqmp/bootbin.bif : {file_type: user, copyto: ./BOOTFS/}
     
 targets:
   default:
