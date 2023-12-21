@@ -7,9 +7,9 @@ filesets:
   py:
     files:
       - py/zynq_boot_gen.py: { file_type: user, copyto: . }
-      - tcl/zynq_gen_fsbl.tcl: { file_type: user, copyto: . }
+      - tcl/zynq_fsbl_gen.tcl: { file_type: user, copyto: . }
       - tcl/export_xsa.tcl: { file_type: user, copyto: . }
-      - uboot_scr/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
+      - uboot_scr/zynq/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
     
 targets:
   default:

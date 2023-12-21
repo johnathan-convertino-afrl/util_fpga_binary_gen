@@ -42,7 +42,7 @@ import pathlib
 files_found = sorted(pathlib.Path().glob("*.bit"))
 
 if len(files_found) == 0:
-  print("INFO: No bit file found, zynq_boot_bin generation failed.")
+  print("INFO: No bit file found, zynqmp_boot_bin generation failed.")
   exit(1)
 
 pathlib.Path(files_found[0]).replace("BOOTFS/system.bit")
@@ -54,22 +54,25 @@ except subprocess.CalledProcessError as error_code:
   exit(1)
 
 try:
-  subprocess.run(["xsct", "zynq_fsbl_gen.tcl"], cwd=str(pathlib.Path.cwd()))
+  subprocess.run(["xsct", "zynqmp_fsbl_gen.tcl"], cwd=str(pathlib.Path.cwd()))
 except subprocess.CalledProcessError as error_code:
   print("xsct error:", error_code.returncode, error_code.output)
   exit(1)
 
-pathlib.Path("vitis/zynq/zynq_fsbl/fsbl.elf").replace("BOOTFS/fsbl.elf")
+pathlib.Path("vitis/zynqmp/zynqmp_fsbl/fsbl_a53.elf").replace("BOOTFS/fsbl.elf")
+
+pathlib.Path("vitis/zynqmp/zynqmp_pmufw/pmufw.elf").replace("BOOTFS/pmufw.elf")
 
 try:
-  subprocess.run(["mkimage", "-C", "none", "-A", "arm", "-T", "script", "-d", "BOOT.cmd", "BOOT.scr"], cwd=str(pathlib.Path.cwd()) + '/' + "BOOTFS")
+  subprocess.run(["mkimage", "-C", "none", "-A", "arm64", "-T", "script", "-d", "BOOT.cmd", "BOOT.scr"], cwd=str(pathlib.Path.cwd()) + '/' + "BOOTFS")
 except subprocess.CalledProcessError as error_code:
   print("mkimage error:", error_code.returncode, error_code.output)
   exit(1)
 
-#future, change to mkimage?
+
+#future change to mkimage?
 try:
-  subprocess.run(["bootgen", "-image", "bootbin.bif", "-arch", "zynq", "-o", "BOOT.bin"], cwd=str(pathlib.Path.cwd()) + '/' + "BOOTFS")
+  subprocess.run(["bootgen", "-image", "bootbin.bif", "-arch", "zynqmp", "-o", "BOOT.bin"], cwd=str(pathlib.Path.cwd()) + '/' + "BOOTFS")
 except subprocess.CalledProcessError as error_code:
   print("bootgen error:", error_code.returncode, error_code.output)
   exit(1)

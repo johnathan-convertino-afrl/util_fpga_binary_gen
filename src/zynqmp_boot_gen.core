@@ -1,0 +1,23 @@
+CAPI=2:
+
+name: AFRL:utility:zynqmp_boot_gen:1.0.0
+description: Generate boot.bin for zynqmp platforms, do not use outside of a specified platform generator.
+
+filesets:
+  py:
+    files:
+      - py/zynqmp_boot_gen.py: { file_type: user, copyto: . }
+      - tcl/zynqmp_fsbl_gen.tcl: { file_type: user, copyto: . }
+      - tcl/export_xsa.tcl: { file_type: user, copyto: . }
+      - uboot_scr/zynqmp/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
+    
+targets:
+  default:
+    description: Script to use boot xml in BOOTFS folder to generate BOOT.bin
+    filesets: [py]
+    hooks:
+      post_build: ["tool_vivado ? (zynqmp_boot_gen)"]
+
+scripts:
+  zynqmp_boot_gen:
+    cmd : [python3, zynqmp_boot_gen.py]

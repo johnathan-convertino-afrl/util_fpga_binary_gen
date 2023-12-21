@@ -1,0 +1,52 @@
+CAPI=2:
+
+name: AFRL:utility:xilinx_zcu102_boot_gen:1.0.0
+description: Git pull fsbl and uboot, generate elf files, and copy to BOOTFS folder in build.
+
+filesets:
+  src:
+    files:
+      - xilinx_uboot/u-boot.elf : {file_type: user, copyto: ./BOOTFS/}
+      - xilinx_atf/build/zynqmp/release/bl31/bl31.elf : {file_type: user, copyto: ./BOOTFS/}
+      - bootbin.bif : {file_type: user, copyto: ./BOOTFS/}
+
+  dep:
+    depend:
+      - AFRL:utility:zynqmp_boot_gen:1.0.0
+      - AFRL:utility:generators:1.0.0
+
+generate:
+  gen_git_atf:
+    generator: git_pull
+    parameters:
+      repo_url: https://github.com/Xilinx/arm-trusted-firmware.git
+      repo_dir: xilinx_atf
+      tag: xilinx-v2022.2
+  gen_bin_atf_build:
+    generator: vpilibmake
+    parameters:
+      src_dir:   xilinx_atf
+      make_args: ["CROSS_COMPILE=aarch64-linux-gnu-", "PLAT=zynqmp", "RESET_TO_BL31=1"]
+  gen_git_uboot:
+    generator: git_pull
+    parameters:
+      repo_url: https://github.com/Xilinx/u-boot-xlnx.git
+      repo_dir: xilinx_uboot
+      tag: xilinx-v2022.2
+  gen_bin_uboot_setup:
+    generator: vpilibmake
+    parameters:
+      src_dir:   xilinx_uboot
+      make_args: ["xilinx_zynqmp_virt_defconfig"]
+  gen_bin_uboot_build:
+    generator: vpilibmake
+    parameters:
+      src_dir:   xilinx_uboot
+      make_args: ["DEVICE_TREE=zynqmp-zcu102-rev1.1", "CROSS_COMPILE=aarch64-linux-gnu-"]
+
+
+
+targets:
+  default: &default
+    filesets: [src, dep]
+    generate: [gen_git_atf, gen_bin_atf_build, gen_git_uboot, gen_bin_uboot_setup, gen_bin_uboot_build]

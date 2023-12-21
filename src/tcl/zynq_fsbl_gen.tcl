@@ -16,10 +16,6 @@ domain active {zynq_fsbl}
 
 domain active {fsbl_domain}
 
-platform generate -quick
-
-app create -name zynq_fsbl -template {Zynq FSBL} -platform zynq -domain fsbl_domain -sysproj zynq
-
-app build -name zynq_fsbl
+platform generate
 
 exit
