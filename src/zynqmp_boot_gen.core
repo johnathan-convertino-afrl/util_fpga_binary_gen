@@ -7,6 +7,7 @@ filesets:
   py:
     files:
       - py/zynqmp_boot_gen.py: { file_type: user, copyto: . }
+      - py/parse_and_gen.py: { file_type: user, copyto: parse_and_gen.py}
       - tcl/zynqmp_fsbl_gen.tcl: { file_type: user, copyto: . }
       - tcl/export_xsa.tcl: { file_type: user, copyto: . }
       - uboot_scr/zynqmp/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
@@ -17,8 +18,10 @@ targets:
     description: Script to use boot xml in BOOTFS folder to generate BOOT.bin
     filesets: [py]
     hooks:
-      post_build: ["tool_vivado ? (zynqmp_boot_gen)"]
+      post_build: ["tool_vivado ? (parse_and_gen)", "tool_vivado ? (zynqmp_boot_gen)"]
 
 scripts:
+  parse_and_gen:
+    cmd : [python3, parse_and_gen.py, ./BOOTFS/bootfs.yml]
   zynqmp_boot_gen:
     cmd : [python3, zynqmp_boot_gen.py]

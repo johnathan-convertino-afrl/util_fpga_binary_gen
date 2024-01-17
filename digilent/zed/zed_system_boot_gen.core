@@ -6,34 +6,12 @@ description: Git pull fsbl and uboot, generate elf files, and copy to BOOTFS fol
 filesets:
   src:
     files:
-      - xilinx_uboot/u-boot.elf : {file_type: user, copyto: ./BOOTFS/}
+      - zed_boot.yml : {file_type: user, copyto: ./BOOTFS/bootfs.yml}
 
   dep:
     depend:
       - AFRL:utility:zynq_boot_gen:1.0.0
-      - AFRL:utility:generators:1.0.0
-
-generate:
-  gen_git_uboot:
-    generator: git_pull
-    parameters:
-      repo_url: https://github.com/Xilinx/u-boot-xlnx.git
-      repo_dir: xilinx_uboot
-      tag: xilinx-v2022.2
-  gen_bin_uboot_setup:
-    generator: vpilibmake
-    parameters:
-      src_dir:   xilinx_uboot
-      make_args: ["xilinx_zynq_virt_defconfig"]
-  gen_bin_uboot_build:
-    generator: vpilibmake
-    parameters:
-      src_dir:   xilinx_uboot
-      make_args: ["DEVICE_TREE=zynq-zed", "CROSS_COMPILE=arm-none-eabi-"]
-
-
 
 targets:
   default: &default
     filesets: [src, dep]
-    generate: [gen_git_uboot, gen_bin_uboot_setup, gen_bin_uboot_build]

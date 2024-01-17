@@ -6,6 +6,7 @@ description: Generate boot.bin for zynq platforms.
 filesets:
   py:
     files:
+      - py/parse_and_gen.py: { file_type: user, copyto: . }
       - py/zynq_boot_gen.py: { file_type: user, copyto: . }
       - tcl/zynq_fsbl_gen.tcl: { file_type: user, copyto: . }
       - tcl/export_xsa.tcl: { file_type: user, copyto: . }
@@ -17,8 +18,10 @@ targets:
     description: Script to use boot xml in BOOTFS folder to generate BOOT.bin
     filesets: [py]
     hooks:
-      post_build: ["tool_vivado ? (zynq_boot_gen)"]
+      post_build: ["tool_vivado ? (parse_and_gen)", "tool_vivado ? (zynq_boot_gen)"]
 
 scripts:
+  parse_and_gen:
+    cmd : [python3, parse_and_gen.py, ./BOOTFS/bootfs.yml]
   zynq_boot_gen:
     cmd : [python3, zynq_boot_gen.py]

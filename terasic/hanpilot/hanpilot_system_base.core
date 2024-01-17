@@ -1,18 +1,18 @@
 CAPI=2:
 
 name: AFRL:utility:terasic_hanpilot_boot_gen:1.0.0
-description: Files to help generate base hanpilot board items
+description: Contains yaml file for build instructions
 
 filesets:
   src:
     files:
-      - hanpilot_system_assign.tcl : {file_type: tclSource}
-      - hanpilot_system_base.tcl : {file_type: user, copyto : .}
+      - hanpilot_boot.yml : {file_type: user, copyto: ./BOOTFS/bootfs.yml}
 
   dep:
     depend:
-      - AFRL:utility:tcl_helper_check:1.0.0
+      - AFRL:utility:arria10_boot_gen:1.0.0
 
 targets:
   default:
     filesets: [src, dep]
+

@@ -1,0 +1,17 @@
+gen_git_uboot:
+  tool: git_pull
+  repo_url: https://github.com/Xilinx/u-boot-xlnx.git
+  repo_dir: git/xilinx_uboot
+  tag: xilinx-v2022.2
+bin_uboot_setup:
+  tool: make
+  src_dir:   git/xilinx_uboot
+  make_args: ["xilinx_zynq_virt_defconfig"]
+bin_uboot_build:
+  tool: make
+  src_dir:   git/xilinx_uboot
+  make_args: ["DEVICE_TREE=zynq-zc706", "CROSS_COMPILE=arm-none-eabi-"]
+copy_uboot:
+  tool: copy
+  src_dir: git/xilinx_uboot/u-boot.elf
+  dest_dir: BOOTFS/u-boot.elf
