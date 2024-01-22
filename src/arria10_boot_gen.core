@@ -4,21 +4,18 @@ name: AFRL:utility:arria10_boot_gen:1.0.0
 description: Generate boot.bin for arria10 platforms.
 
 filesets:
-  py:
+  src:
     files:
       - py/parse_and_gen.py: { file_type: user, copyto: . }
-      - py/arria10_boot_gen.py: { file_type: user, copyto: . }
       - uboot_scr/arria10/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
     
 targets:
   default:
     description: Script to generate BOOTFS files
-    filesets: [py]
+    filesets: [src]
     hooks:
-      post_build: ["tool_quartus ? (arria10_boot_gen)", "tool_quartus? (parse_and_gen)"]
+      post_build: ["tool_quartus? (parse_and_gen)"]
 
 scripts:
-  arria10_boot_gen:
-    cmd : [python3, arria10_boot_gen.py]
   parse_and_gen:
     cmd : [python3, parse_and_gen.py, ./BOOTFS/bootfs.yml]

@@ -1,3 +1,7 @@
+gen_rbf_file:
+  tool: quartus_cpf
+  sof_file: "output_files/*.sof"
+  rbf_name: output_files/ghrd_10as066n2.rbf
 git_uboot:
   tool: git_pull
   repo_url: https://github.com/altera-opensource/u-boot-socfpga.git
@@ -35,3 +39,8 @@ copy_uboot_spl:
   tool: copy
   src_dir: git/intel_uboot/spl/u-boot-splx4.sfp
   dest_dir: BOOTFS/u-boot-splx4.sfp
+gen_boot_script:
+  tool: mkimage_for_boot_script
+  arch: ARM
+  src_file: BOOTFS/BOOT.cmd
+  dest_file: BOOTFS/BOOT.scr

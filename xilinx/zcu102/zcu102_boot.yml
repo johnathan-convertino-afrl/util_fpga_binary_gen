@@ -1,3 +1,26 @@
+find_and_move_bitfile:
+  tool: find_and_move
+  src_file: "*.bit"
+  dest_file: BOOTFS/system.bit
+gen_xsa:
+  tool: vivado_xsa_gen
+  xsa_tcl_file: export_xsa.tcl
+gen_fsbl_pmufw:
+  tool: xsct_tcl_run
+  tcl_file: zynqmp_fsbl_gen.tcl
+copy_fsbl:
+  tool: copy
+  src_dir: vitis/zynqmp/zynqmp_fsbl/fsbl_a53.elf
+  dest_dir: BOOTFS/fsbl.elf
+copy_pmufw:
+  tool: copy
+  src_dir: vitis/zynqmp/zynqmp_pmufw/pmufw.elf
+  dest_dir: BOOTFS/pmufw.elf
+gen_boot_script:
+  tool: mkimage_for_boot_script
+  arch: arm64
+  src_file: BOOTFS/BOOT.cmd
+  dest_file: BOOTFS/BOOT.scr
 git_atf:
   tool: git_pull
   repo_url: https://github.com/Xilinx/arm-trusted-firmware.git
@@ -28,3 +51,9 @@ copy_atf:
   tool: copy
   src_dir: git/xilinx_atf/build/zynqmp/release/bl31/bl31.elf
   dest_dir: BOOTFS/bl31.elf
+gen_boot_binary:
+  tool: xiilinx_bootgen
+  arch: zynqmp
+  exec_dir: BOOTFS
+  src_file: bootbin.bif
+  dest_file: BOOT.bin

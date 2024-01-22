@@ -4,9 +4,8 @@ name: AFRL:utility:zynqmp_boot_gen:1.0.0
 description: Generate boot.bin for zynqmp platforms, do not use outside of a specified platform generator.
 
 filesets:
-  py:
+  src:
     files:
-      - py/zynqmp_boot_gen.py: { file_type: user, copyto: . }
       - py/parse_and_gen.py: { file_type: user, copyto: parse_and_gen.py}
       - tcl/zynqmp_fsbl_gen.tcl: { file_type: user, copyto: . }
       - tcl/export_xsa.tcl: { file_type: user, copyto: . }
@@ -16,12 +15,10 @@ filesets:
 targets:
   default:
     description: Script to use boot xml in BOOTFS folder to generate BOOT.bin
-    filesets: [py]
+    filesets: [src]
     hooks:
-      post_build: ["tool_vivado ? (parse_and_gen)", "tool_vivado ? (zynqmp_boot_gen)"]
+      post_build: ["tool_vivado ? (parse_and_gen)"]
 
 scripts:
   parse_and_gen:
     cmd : [python3, parse_and_gen.py, ./BOOTFS/bootfs.yml]
-  zynqmp_boot_gen:
-    cmd : [python3, zynqmp_boot_gen.py]
