@@ -52,7 +52,7 @@ copy_atf:
   src_dir: git/xilinx_atf/build/zynqmp/release/bl31/bl31.elf
   dest_dir: BOOTFS/bl31.elf
 gen_boot_binary:
-  tool: xiilinx_bootgen
+  tool: xilinx_bootgen
   arch: zynqmp
   exec_dir: BOOTFS
   src_file: bootbin.bif

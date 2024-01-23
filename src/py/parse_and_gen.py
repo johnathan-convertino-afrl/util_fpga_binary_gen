@@ -44,34 +44,38 @@ def main():
 
   loaded = yaml.safe_load(stream)
 
+  log = open(os.getcwd() + '/' + "generate.log", "w")
+
   for key, value in loaded.items():
     print("INFO: GENERATING", key)
     print("INFO: TOOL", value['tool'])
 
     if value['tool'] == 'git_pull':
-      git_pull(value)
+      git_pull(value, log)
     elif value['tool'] == 'make':
-      make(value)
+      make(value, log)
     elif value['tool'] == 'copy':
-      copy(value)
+      copy(value, log)
     elif value['tool'] == 'bash':
-      bash(value)
+      bash(value, log)
     elif value['tool'] == 'quartus_cpf':
-      quartus_cpf(value)
+      quartus_cpf(value, log)
     elif value['tool'] == 'mkimage_for_boot_script':
-      mkimage_for_boot_script(value)
+      mkimage_for_boot_script(value, log)
     elif value['tool'] == 'vivado_xsa_gen':
-      vivado_xsa_gen(value)
+      vivado_xsa_gen(value, log)
     elif value['tool'] == 'find_and_move':
-      find_and_move(value)
+      find_and_move(value, log)
     elif value['tool'] == 'xsct_tcl_run':
-      xsct_tcl_run(value)
-    elif value['tool'] == 'xiilinx_bootgen':
-      xilinx_bootgen(value)
+      xsct_tcl_run(value, log)
+    elif value['tool'] == 'xilinx_bootgen':
+      xilinx_bootgen(value, log)
     else:
       print("ERROR: NO VALID TOOL")
 
-def git_pull(value):
+  log.close()
+
+def git_pull(value, log):
   #get dirrrs
   repo_url = value['repo_url']
   tag      = value['tag']
@@ -84,23 +88,21 @@ def git_pull(value):
   try:
     repo_data = git.Repo.clone_from(repo_url, os.getcwd() + '/' + repo_dir)
   except Exception as e:
-    print(e)
+    print("ERROR: ", e)
     return
 
   try:
     if tag is not None:
       repo_data.git.checkout(tag)
   except Exception as e:
-    print(e)
+    print("ERROR: ", e)
     return
 
-def make(value):
+def make(value, log):
   src_dir   = value['src_dir']
   make_args = value['make_args']
 
   make_make_args = ["make"] + make_args
-
-  log = open(os.getcwd() + '/' + pathlib.Path(src_dir).name + "_build.log", "w")
 
   try:
     subprocess.run(make_make_args, stdout=log, stderr=log, cwd=os.getcwd() + '/' + src_dir)
@@ -108,25 +110,21 @@ def make(value):
     print("ERROR: Make,", error_code.returncode, error_code.output)
     return
 
-  log.close()
-
-def copy(value):
+def copy(value, log):
   src_dir = value['src_dir']
   dest_dir = value['dest_dir']
 
   try:
     shutil.copyfile(os.getcwd() + '/' + src_dir, os.getcwd() + '/' + dest_dir)
   except Exception as e:
-    print(e)
+    print("ERROR: ", e)
     return
 
-def bash(value):
+def bash(value, log):
   command   = value['command']
   arguments = value['arguments']
 
   executioner = command + arguments
-
-  log = open(os.getcwd() + '/' + pathlib.Path(command[0]).name + "_exec.log", "w")
 
   try:
     subprocess.run(executioner, stdout=log, stderr=log, cwd=os.getcwd())
@@ -134,9 +132,7 @@ def bash(value):
     print("ERROR: Bash,", error_code.returncode, error_code.output)
     return
 
-  log.close()
-
-def quartus_cpf(value):
+def quartus_cpf(value, log):
   sof_file = value['sof_file']
   rbf_name = value['rbf_name']
 
@@ -147,33 +143,32 @@ def quartus_cpf(value):
     return
 
   try:
-    subprocess.run(["quartus_cpf", "-c", "--hps", "-o", "bitstream_compression=on", files_found[0], rbf_name], cwd=str(pathlib.Path.cwd()))
+    subprocess.run(["quartus_cpf", "-c", "--hps", "-o", "bitstream_compression=on", files_found[0], rbf_name], stdout=log, stderr=log, cwd=str(pathlib.Path.cwd()))
   except subprocess.CalledProcessError as error_code:
-    print("Quartus cpf error:", error_code.returncode, error_code.output)
+    print("ERROR:", error_code.returncode, error_code.output)
     return
 
-def mkimage_for_boot_script(value):
+def mkimage_for_boot_script(value, log):
   arch       = value['arch']
   src_file   = value['src_file']
   dest_file  = value['dest_file']
 
   try:
-    subprocess.run(["mkimage", "-C", "none", "-A", arch, "-T", "script", "-d", src_file, dest_file], cwd=str(pathlib.Path.cwd()))
+    subprocess.run(["mkimage", "-C", "none", "-A", arch, "-T", "script", "-d", src_file, dest_file], stdout=log, stderr=log, cwd=str(pathlib.Path.cwd()))
   except subprocess.CalledProcessError as error_code:
-    print("mkimage error:", error_code.returncode, error_code.output)
+    print("ERROR:", error_code.returncode, error_code.output)
     return
 
-def vivado_xsa_gen(value):
+def vivado_xsa_gen(value, log):
   xsa_tcl_file = value['xsa_tcl_file']
 
   try:
-    subprocess.run(["vivado", "-mode", "tcl", "-nolog", "-nojournal", "-source", xsa_tcl_file], cwd=str(pathlib.Path.cwd()))
+    subprocess.run(["vivado", "-mode", "tcl", "-nolog", "-nojournal", "-source", xsa_tcl_file], stdout=log, stderr=log, cwd=str(pathlib.Path.cwd()))
   except subprocess.CalledProcessError as error_code:
-    print("vivado error:", error_code.returncode, error_code.output)
+    print("ERROR:", error_code.returncode, error_code.output)
     return
 
-
-def find_and_move(value):
+def find_and_move(value, log):
   src_file   = value['src_file']
   dest_file  = value['dest_file']
 
@@ -185,23 +180,23 @@ def find_and_move(value):
 
   pathlib.Path(files_found[0]).replace(dest_file)
 
-def xsct_tcl_run(value):
+def xsct_tcl_run(value, log):
   tcl_file  = value['tcl_file']
 
   try:
-    subprocess.run(["xsct", tcl_file], cwd=str(pathlib.Path.cwd()))
+    subprocess.run(["xsct", tcl_file], stdout=log, stderr=log, cwd=str(pathlib.Path.cwd()))
   except subprocess.CalledProcessError as error_code:
     print("ERROR:", error_code.returncode, error_code.output)
-    exit(1)
+    return
 
-def xilinx_bootgen(value):
+def xilinx_bootgen(value, log):
   arch       = value['arch']
   src_file   = value['src_file']
   dest_file  = value['dest_file']
   exec_dir   = value['exec_dir']
 
   try:
-    subprocess.run(["bootgen", "-image", src_file, "-arch", arch, "-o", dest_file], cwd=str(pathlib.Path.cwd()) + "/" + exec_dir)
+    subprocess.run(["bootgen", "-image", src_file, "-arch", arch, "-o", dest_file],  stdout=log, stderr=log, cwd=str(pathlib.Path.cwd()) + "/" + exec_dir)
   except subprocess.CalledProcessError as error_code:
     print("ERROR:", error_code.returncode, error_code.output)
     return

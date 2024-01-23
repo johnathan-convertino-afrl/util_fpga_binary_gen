@@ -29,7 +29,7 @@ bin_uboot_build:
   make_args: ["CROSS_COMPILE=arm-none-eabi-", "ARCH=arm"]
 bash_mkimage_local:
   tool: bash
-  command: ["git/intel_uboot/tools/mkimage"]
+  command: ["./git/intel_uboot/tools/mkimage"]
   arguments: ["-E", "-f", "git/intel_uboot/board/altera/arria10-socdk/fit_spl_fpga.its", "BOOTFS/fit_spl_fpga.itb"]
 copy_uboot:
   tool: copy

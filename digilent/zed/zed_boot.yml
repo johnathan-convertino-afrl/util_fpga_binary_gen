@@ -35,7 +35,7 @@ copy_uboot:
   src_dir: git/xilinx_uboot/u-boot.elf
   dest_dir: BOOTFS/u-boot.elf
 gen_boot_binary:
-  tool: xiilinx_bootgen
+  tool: xilinx_bootgen
   arch: zynq
   exec_dir: BOOTFS
   src_file: bootbin.bif
