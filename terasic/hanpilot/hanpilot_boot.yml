@@ -22,7 +22,7 @@ bash_quartus_filter:
 bin_uboot_setup:
   tool: make
   src_dir: git/intel_uboot
-  make_args: ["CROSS_COMPILE=arm-none-eabi-", "ARCH=arm", "socfpga_arria10_defconfig"]
+  make_args: ["CROSS_COMPILE=arm-none-eabi-", "ARCH=arm", "socfpga_arria10_hanpilot_defconfig"]
 bin_uboot_build:
   tool: make
   src_dir: git/intel_uboot
