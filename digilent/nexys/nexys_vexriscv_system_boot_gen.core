@@ -1,0 +1,17 @@
+CAPI=2:
+
+name: AFRL:utility:digilent_vexriscv_nexys_boot_gen:1.0.0
+description: Git pull fsbl and uboot, generate elf files, and copy to BOOTFS folder in build.
+
+filesets:
+  src:
+    files:
+      - nexys_vexriscv_boot.yml : {file_type: user, copyto: ./BOOTFS/bootfs.yml}
+
+  dep:
+    depend:
+      - AFRL:utility:vexriscv_boot_gen:1.0.0
+
+targets:
+  default: &default
+    filesets: [src, dep]

@@ -5,6 +5,9 @@ find_and_move_bitfile:
 gen_xsa:
   tool: vivado_xsa_gen
   xsa_tcl_file: export_xsa.tcl
+gen_xparam:
+  tool: xsct_tcl_run
+  tcl_file: xparam_header_gen.tcl
 gen_fsbl:
   tool: xsct_tcl_run
   tcl_file: zynq_fsbl_gen.tcl

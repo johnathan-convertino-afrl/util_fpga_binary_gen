@@ -1,17 +1,15 @@
 CAPI=2:
 
-name: AFRL:utility:zynqmp_boot_gen:1.0.0
-description: Generate boot.bin for zynqmp platforms, do not use outside of a specified platform generator.
+name: AFRL:utility:vexriscv_boot_gen:1.0.0
+description: Generate boot.bin for Vexriscv platforms.
 
 filesets:
   src:
     files:
-      - py/parse_and_gen.py: { file_type: user, copyto: parse_and_gen.py}
-      - tcl/zynqmp_fsbl_gen.tcl: { file_type: user, copyto: . }
+      - py/parse_and_gen.py: { file_type: user, copyto: . }
       - tcl/export_xsa.tcl: { file_type: user, copyto: . }
       - tcl/xparam_header_gen.tcl: { file_type: user, copyto: .}
-      - uboot_scr/zynqmp/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
-      - bootbin/zynqmp/bootbin.bif : {file_type: user, copyto: ./BOOTFS/}
+      - uboot_scr/zynq/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
     
 targets:
   default:
