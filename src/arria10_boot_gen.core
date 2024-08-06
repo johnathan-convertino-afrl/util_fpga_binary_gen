@@ -6,15 +6,19 @@ description: Generate boot.bin for arria10 platforms.
 filesets:
   src:
     files:
-      - py/parse_and_gen.py: { file_type: user, copyto: . }
       - uboot_scr/arria10/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
+      - gcc/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf.tar.xz : {file_type: user, copyto: ./TOOLS/}
+
+  dep:
+    depend:
+      - AFRL:utility:python_build_tool:1.0.0
     
 targets:
   default:
     description: Script to generate BOOTFS files
-    filesets: [src]
+    filesets: [src, dep]
     hooks:
-      post_build: ["tool_quartus? (parse_and_gen)"]
+      post_build: ["tool_quartus ? (parse_and_gen)"]
 
 scripts:
   parse_and_gen:

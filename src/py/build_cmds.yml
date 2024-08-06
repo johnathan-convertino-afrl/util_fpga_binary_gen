@@ -1,0 +1,34 @@
+################################################################################
+##  file: build_cmds.yml
+##  author: Jay Convertino
+##  Info: There are keyboards that are autopopulated. They are as follows.
+##  - _project_name = target name (targets become projects to build, yeah meh).
+##  - _pwd = current root path to the repository
+##  - {SOMETHING} = a value to fill in from the build.yml file that describes
+##    actions for the command
+################################################################################
+fusesoc:
+  cmd_1: ["fusesoc", "--cores-root", "{path}", "run", "--build", "--work-root", "output/hdl/{_project_name}", "--target", "{target}", "{project}"]
+buildroot:
+  cmd_1: ["rm", "-rf", "{_pwd}/output/linux/{_project_name}"]
+  cmd_2: ["make", "-C", "{path}", "distclean"]
+  cmd_3: ["make", "O={_pwd}/output/linux/{_project_name}", "-C", "{path}", "{config}"]
+  cmd_4: ["make", "O={_pwd}/output/linux/{_project_name}", "-C", "{path}"]
+script:
+  cmd_1: ["{file}", "{args}"]
+genimage:
+  cmd_1: ["mkdir", "-p", "{_pwd}/output/genimage/tmp/{_project_name}"]
+  cmd_2: ["genimage", "--config", "{path}/{_project_name}.cfg"]
+vivado_tcl:
+  cmd_1: ["vivado", "-mode", "tcl", "-nolog", "-nojournal", "-source", "{tcl_file}"]
+xsct_tcl:
+  cmd_1: ["xsct", "{tcl_file}"]
+mkimage:
+  cmd_1: ["mkimage", "-C", "none", "-A", "{arch}", "-T", "script", "-d", "{src_file}", "{dest_file}"]
+make:
+  cmd_1: ["make", "-C", "{src_dir}", "{args}"]
+xilinx_bootgen:
+  cmd_1: ["cd", "{exec_dir}"]
+  cmd_2: ["bootgen", "-image", "{src_file}", "-arch", "{arch}", "-o", "{dest_file}"]
+quartus_cpf:
+  cmd_1: ["quartus_cpf", "-c", "--hps", "-o", "bitstream_compression=on", "{sof_file}", "{rbf_name}"]

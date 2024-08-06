@@ -1,0 +1,16 @@
+CAPI=2:
+
+name: AFRL:utility:python_build_tool:1.0.0
+description: Python build tools for various FPGA related binaries.
+
+filesets:
+  src:
+    files:
+      - py/parse_and_gen.py: { file_type: user, copyto: . }
+      - py/builder.py: {file_type: user, copyto: .}
+      - py/build_cmds.yml: {file_type: user, copyto: .}
+    
+targets:
+  default:
+    description: Script to generate files for pre or post build time.
+    filesets: [src]

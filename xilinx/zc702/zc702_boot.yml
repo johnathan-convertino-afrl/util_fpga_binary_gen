@@ -2,44 +2,59 @@ find_and_move_bitfile:
   tool: find_and_move
   src_file: "*.bit"
   dest_file: BOOTFS/system.bit
-gen_xsa:
-  tool: vivado_xsa_gen
-  xsa_tcl_file: export_xsa.tcl
-gen_xparam:
-  tool: xsct_tcl_run
-  tcl_file: xparam_header_gen.tcl
-gen_fsbl:
-  tool: xsct_tcl_run
-  tcl_file: zynq_fsbl_gen.tcl
+run_gen_scripts:
+  tool: builder
+  run_gen:
+    sequential:
+      vivado_tcl:
+        tcl_file: export_xsa.tcl
+      xsct_tcl:
+        tcl_file: zynq_fsbl_gen.tcl
+      mkimage:
+        arch: ARM
+        src_file: BOOTFS/BOOT.cmd
+        dest_file: BOOTFS/BOOT.scr
 copy_fsbl:
   tool: copy
   src_dir: vitis/zynq/zynq_fsbl/fsbl.elf
   dest_dir: BOOTFS/fsbl.elf
-gen_boot_script:
-  tool: mkimage_for_boot_script
-  arch: arm
-  src_file: BOOTFS/BOOT.cmd
-  dest_file: BOOTFS/BOOT.scr
-gen_git_uboot:
+git_uboot:
   tool: git_pull
   repo_url: https://github.com/Xilinx/u-boot-xlnx.git
   repo_dir: git/xilinx_uboot
   tag: xilinx-v2022.2
-bin_uboot_setup:
-  tool: make
-  src_dir:   git/xilinx_uboot
-  make_args: ["xilinx_zynq_virt_defconfig"]
-bin_uboot_build:
-  tool: make
-  src_dir:   git/xilinx_uboot
-  make_args: ["DEVICE_TREE=zynq-zc702", "CROSS_COMPILE=arm-none-eabi-"]
+untar_gcc:
+  tool: untar
+  src_file: TOOLS/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf.tar.xz
+  dest_dir: TOOLS/
+find_and_move_dir:
+  tool: find_and_move
+  src_file: TOOLS/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf
+  dest_file: TOOLS/gcc
+run_make_setup_uboot:
+  tool: builder
+  run_make_setup_uboot:
+    sequential:
+      make:
+        src_dir: git/xilinx_uboot
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/arm-none-linux-gnueabihf- xilinx_zynq_virt_defconfig"
+run_make_build_uboot:
+  tool: builder
+  run_make_uboot:
+    sequential:
+      make:
+        src_dir: git/xilinx_uboot
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/arm-none-linux-gnueabihf- DEVICE_TREE=zynq-zc702"
 copy_uboot:
   tool: copy
   src_dir: git/xilinx_uboot/u-boot.elf
   dest_dir: BOOTFS/u-boot.elf
-gen_boot_binary:
-  tool: xilinx_bootgen
-  arch: zynq
-  exec_dir: BOOTFS
-  src_file: bootbin.bif
-  dest_file: BOOT.bin
+run_boot_binary_gen:
+  tool: builder
+  run_boot_gen:
+    sequential:
+      xilinx_bootgen:
+        arch: zynq
+        exec_dir: BOOTFS
+        src_file: bootbin.bif
+        dest_file: BOOT.bin

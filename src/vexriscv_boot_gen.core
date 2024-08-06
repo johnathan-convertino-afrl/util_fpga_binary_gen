@@ -6,17 +6,20 @@ description: Generate boot.bin for Vexriscv platforms.
 filesets:
   src:
     files:
-      - py/parse_and_gen.py: { file_type: user, copyto: . }
       - tcl/export_xsa.tcl: { file_type: user, copyto: . }
       - tcl/xparam_header_gen.tcl: { file_type: user, copyto: .}
       - uboot_scr/zynq/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
     
+  dep:
+    depend:
+      - AFRL:utility:python_build_tool:1.0.0
+
 targets:
   default:
-    description: Script to use boot xml in BOOTFS folder to generate BOOT.bin
-    filesets: [src]
+    description: Script to generate BOOTFS files
+    filesets: [src, dep]
     hooks:
-      post_build: ["tool_vivado ? (parse_and_gen)"]
+      post_build: ["parse_and_gen"]
 
 scripts:
   parse_and_gen:

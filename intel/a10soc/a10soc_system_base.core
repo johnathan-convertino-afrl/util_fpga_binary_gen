@@ -6,7 +6,7 @@ description: Contains yaml file for build instructions
 filesets:
   src:
     files:
-      - arria10_boot.yml : {file_type: user, copyto: ./BOOTFS/bootfs.yml}
+      - a10soc_boot.yml : {file_type: user, copyto: ./BOOTFS/bootfs.yml}
 
   dep:
     depend:

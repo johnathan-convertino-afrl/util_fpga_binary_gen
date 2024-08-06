@@ -28,178 +28,211 @@
 ################################################################################
 
 import yaml
-import git
 import subprocess
 import os
 import pathlib
 import shutil
 import sys
+import tarfile
+import argparse
+import logging
+import builder
+import time
+
+logger = logging.getLogger()
+
+# check for git
+try:
+  import git
+except ImportError:
+  print("REQUIREMENT MISSING: gitpython, pip install gitpython")
+  exit(0)
 
 def main():
-  ## only want one argument
-  if len(sys.argv) != 2:
-    raise Exception("ERROR: parse_and_arg takes one argument, yaml file to open.")
+  args = parse_args(sys.argv[1:])
 
-  stream = open(sys.argv[1], 'r')
+  yaml_data = open_yaml(args.yaml_file)
 
-  loaded = yaml.safe_load(stream)
+  if yaml_data == None:
+    print("ERROR: no yaml file data.")
+    exit(~0)
 
-  log = open(os.getcwd() + '/' + "generate.log", "w")
+  logger_setup(args.debug)
 
-  for key, value in loaded.items():
+  for key, value in yaml_data.items():
     print("INFO: GENERATING", key)
     print("INFO: TOOL", value['tool'])
 
     if value['tool'] == 'git_pull':
-      git_pull(value, log)
-    elif value['tool'] == 'make':
-      make(value, log)
+      try:
+        git_pull(value)
+      except Exception as e:
+        logger.error(str(e))
+        print(f"ERROR: {value['tool']} failed. See log for error.")
+        exit(~0)
     elif value['tool'] == 'copy':
-      copy(value, log)
-    elif value['tool'] == 'bash':
-      bash(value, log)
-    elif value['tool'] == 'quartus_cpf':
-      quartus_cpf(value, log)
-    elif value['tool'] == 'mkimage_for_boot_script':
-      mkimage_for_boot_script(value, log)
-    elif value['tool'] == 'vivado_xsa_gen':
-      vivado_xsa_gen(value, log)
+      try:
+        copy(value)
+      except Exception as e:
+        logger.error(str(e))
+        print(f"ERROR: {value['tool']} failed. See log for error.")
+        exit(~0)
     elif value['tool'] == 'find_and_move':
-      find_and_move(value, log)
-    elif value['tool'] == 'xsct_tcl_run':
-      xsct_tcl_run(value, log)
-    elif value['tool'] == 'xilinx_bootgen':
-      xilinx_bootgen(value, log)
+      try:
+        find_and_move(value)
+      except Exception as e:
+        logger.error(str(e))
+        print(f"ERROR: {value['tool']} failed. See log for error.")
+        exit(~0)
+    elif value['tool'] == 'builder':
+      try:
+        value.pop('tool')
+        run_builder(value)
+      except Exception as e:
+        logger.error(str(e))
+        print(f"ERROR: {value['tool']} failed. See log for error.")
+        exit(~0)
+    elif value['tool'] == 'untar':
+      try:
+        untar(value)
+      except Exception as e:
+        logger.error(str(e))
+        print(f"ERROR: {value['tool']} failed. See log for error.")
+        exit(~0)
     else:
       print("ERROR: NO VALID TOOL")
 
-  log.close()
+    print("INFO: TOOL COMPLETED");
 
-def git_pull(value, log):
+def git_pull(value):
   #get dirrrs
   repo_url = value['repo_url']
   tag      = value['tag']
   repo_dir = value['repo_dir']
 
-  if os.path.exists(os.getcwd() + '/' + repo_dir):
-    print("INFO: GIT library exists in path, no pull, no checkout.")
-    return
+  if not os.path.exists(os.getcwd() + '/' + repo_dir):
+    logger.info(f"Pulling GIT repo from {repo_url}")
 
-  try:
-    repo_data = git.Repo.clone_from(repo_url, os.getcwd() + '/' + repo_dir)
-  except Exception as e:
-    print("ERROR: ", e)
-    return
+    try:
+      repo_data = git.Repo.clone_from(repo_url, os.getcwd() + '/' + repo_dir)
+    except Exception as e: raise
+  else:
+    logger.info(f"GIT repo exists, opening for checkout.")
+    repo_data = git.Repo(os.getcwd() + '/' + repo_dir)
 
   try:
     if tag is not None:
       repo_data.git.checkout(tag)
-  except Exception as e:
-    print("ERROR: ", e)
-    return
+  except Exception as e: raise
 
-def make(value, log):
-  src_dir   = value['src_dir']
-  make_args = value['make_args']
-
-  make_make_args = ["make"] + make_args
-
-  try:
-    subprocess.run(make_make_args, stdout=log, stderr=log, cwd=os.getcwd() + '/' + src_dir)
-  except subprocess.CalledProcessError as error_code:
-    print("ERROR: Make,", error_code.returncode, error_code.output)
-    return
-
-def copy(value, log):
+def copy(value):
   src_dir = value['src_dir']
   dest_dir = value['dest_dir']
 
   try:
     shutil.copyfile(os.getcwd() + '/' + src_dir, os.getcwd() + '/' + dest_dir)
-  except Exception as e:
-    print("ERROR: ", e)
-    return
+  except Exception as e: raise
 
-def bash(value, log):
-  command   = value['command']
-  arguments = value['arguments']
-
-  executioner = command + arguments
-
-  try:
-    subprocess.run(executioner, stdout=log, stderr=log, cwd=os.getcwd())
-  except subprocess.CalledProcessError as error_code:
-    print("ERROR: Bash,", error_code.returncode, error_code.output)
-    return
-
-def quartus_cpf(value, log):
-  sof_file = value['sof_file']
-  rbf_name = value['rbf_name']
-
-  files_found = sorted(pathlib.Path().glob("output_files/*.sof"))
-
-  if len(files_found) == 0:
-    print("ERROR: No sof file found, generation failed.")
-    return
-
-  try:
-    subprocess.run(["quartus_cpf", "-c", "--hps", "-o", "bitstream_compression=on", files_found[0], rbf_name], stdout=log, stderr=log, cwd=str(pathlib.Path.cwd()))
-  except subprocess.CalledProcessError as error_code:
-    print("ERROR:", error_code.returncode, error_code.output)
-    return
-
-def mkimage_for_boot_script(value, log):
-  arch       = value['arch']
-  src_file   = value['src_file']
-  dest_file  = value['dest_file']
-
-  try:
-    subprocess.run(["mkimage", "-C", "none", "-A", arch, "-T", "script", "-d", src_file, dest_file], stdout=log, stderr=log, cwd=str(pathlib.Path.cwd()))
-  except subprocess.CalledProcessError as error_code:
-    print("ERROR:", error_code.returncode, error_code.output)
-    return
-
-def vivado_xsa_gen(value, log):
-  xsa_tcl_file = value['xsa_tcl_file']
-
-  try:
-    subprocess.run(["vivado", "-mode", "tcl", "-nolog", "-nojournal", "-source", xsa_tcl_file], stdout=log, stderr=log, cwd=str(pathlib.Path.cwd()))
-  except subprocess.CalledProcessError as error_code:
-    print("ERROR:", error_code.returncode, error_code.output)
-    return
-
-def find_and_move(value, log):
+def find_and_move(value):
   src_file   = value['src_file']
   dest_file  = value['dest_file']
 
   files_found = sorted(pathlib.Path().glob(src_file))
 
-  if len(files_found) == 0:
-    print("ERROR: src_file not found.")
-    return
+  if len(files_found) == 0: raise
+
+  logger.info(f"Moving {src_file} to {dest_file}")
 
   pathlib.Path(files_found[0]).replace(dest_file)
 
-def xsct_tcl_run(value, log):
-  tcl_file  = value['tcl_file']
-
-  try:
-    subprocess.run(["xsct", tcl_file], stdout=log, stderr=log, cwd=str(pathlib.Path.cwd()))
-  except subprocess.CalledProcessError as error_code:
-    print("ERROR:", error_code.returncode, error_code.output)
-    return
-
-def xilinx_bootgen(value, log):
-  arch       = value['arch']
+def untar(value):
   src_file   = value['src_file']
-  dest_file  = value['dest_file']
-  exec_dir   = value['exec_dir']
+  dest_dir   = value['dest_dir']
+
+  comp_file = None
+
+  # open file
+  try:
+    comp_file = tarfile.open(src_file)
+  except Exception as e: raise
+
+  # extracting file
+  try:
+    comp_file.extractall(dest_dir)
+  except Exception as e: raise
+
+  logger.info(f"Extracting {src_file} to {dest_dir}")
+
+  comp_file.close()
+
+
+def run_builder(yaml_data):
+  bob = builder.bob("build_cmds.yml", yaml_data, None, False)
 
   try:
-    subprocess.run(["bootgen", "-image", src_file, "-arch", arch, "-o", dest_file],  stdout=log, stderr=log, cwd=str(pathlib.Path.cwd()) + "/" + exec_dir)
-  except subprocess.CalledProcessError as error_code:
-    print("ERROR:", error_code.returncode, error_code.output)
-    return
+    bob.run()
+  except KeyboardInterrupt:
+    bob.stop()
+    time.sleep(1)
+    print("\n" + f"Build interrupted with CTRL+C.")
+    exit(~0)
+  except Exception as e:
+    logger.error(str(e))
+    time.sleep(1)
+    print("\n" + f"ERROR: build system failure, for details, see log file log/{os.path.basename(logger.handlers[0].baseFilename)}")
+    exit(~0)
+
+# setup logger for log file
+def logger_setup(debug):
+  log_name = time.strftime("log/" + "%y%m%d", time.localtime()) + '_' +  str(int(time.mktime(time.localtime()))) + '.log'
+
+  os.makedirs(os.getcwd() + "/log", exist_ok=True)
+
+  if debug:
+    logger.setLevel(logging.DEBUG)
+  else:
+    logger.setLevel(logging.INFO)
+
+  log_file = logging.FileHandler(filename = log_name, mode = 'w', delay=True)
+
+  if debug:
+    log_file.setLevel(logging.DEBUG)
+  else:
+    log_file.setLevel(logging.INFO)
+
+  format_file = logging.Formatter(fmt = '%(asctime)-12s : %(levelname)-8s : %(message)s', datefmt='%y.%m.%d %H:%M')
+  log_file.setFormatter(format_file)
+
+  logger.addHandler(log_file)
+
+# parse args for tuning build
+def parse_args(argv):
+  parser = argparse.ArgumentParser(description='Automate generation using yaml target list.')
+
+  parser.add_argument('yaml_file',                                                                                    help='Yaml file used to describe build')
+  parser.add_argument('--debug',      action='store_true',  default=False,        dest='debug',       required=False, help='Turn on debug logging messages')
+
+  return parser.parse_args()
+
+def open_yaml(file_name):
+  try:
+    stream = open(file_name, 'r')
+  except:
+    print(file_name + " not available.")
+    return None
+
+  try:
+    yaml_data = yaml.safe_load(stream)
+  except yaml.YAMLError as e:
+    logger.error("yaml issue")
+    for line in str(e).split("\n"):
+      logger.error(line)
+    print("ERROR: check log for yaml parse error.")
+    stream.close()
+    return None
+
+  stream.close()
+  return yaml_data
 
 if __name__=="__main__":
   main()

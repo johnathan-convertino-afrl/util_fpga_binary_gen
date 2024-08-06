@@ -1,38 +1,38 @@
 find_and_move_sof:
   tool: find_and_move
   src_file: "output_files/*.sof"
-  dest_file: output_files/hanpilot.sof
+  dest_file: output_files/ghrd_10as066n2.sof
 run_gen:
   tool: builder
   run_gen:
     sequential:
       quartus_cpf:
-        sof_file: output_files/hanpilot.sof
-        rbf_name: output_files/hanpilot.rbf
+        sof_file: output_files/ghrd_10as066n2.sof
+        rbf_name: output_files/ghrd_10as066n2.rbf
       mkimage:
         arch: ARM
         src_file: BOOTFS/BOOT.cmd
         dest_file: BOOTFS/BOOT.scr
 git_uboot:
   tool: git_pull
-  repo_url: https://github.com/johnathan-convertino-afrl/u-boot-socfpga.git
+  repo_url: https://github.com/altera-opensource/u-boot-socfpga.git
   repo_dir: git/intel_uboot
-  tag: socfpga_v2020.07
+  tag: socfpga_v2022.10
 copy_rbf_periph:
   tool: copy
-  src_dir: output_files/hanpilot.periph.rbf
-  dest_dir: git/intel_uboot/hanpilot.periph.rbf
+  src_dir: output_files/ghrd_10as066n2.periph.rbf
+  dest_dir: git/intel_uboot/ghrd_10as066n2.periph.rbf
 copy_rbf_core:
   tool: copy
-  src_dir: output_files/hanpilot.core.rbf
-  dest_dir: git/intel_uboot/hanpilot.core.rbf
+  src_dir: output_files/ghrd_10as066n2.core.rbf
+  dest_dir: git/intel_uboot/ghrd_10as066n2.core.rbf
 run_filter_script:
   tool: builder
   run_filter:
     sequential:
       script:
         file: "{_pwd}/git/intel_uboot/arch/arm/mach-socfpga/qts-filter-a10.sh"
-        args: "{_pwd}/hps_isw_handoff/hps.xml {_pwd}/git/intel_uboot/arch/arm/dts/socfpga_hanpilot_socdk_sdmmc_handoff.h"
+        args: "{_pwd}/hps_isw_handoff/hps.xml {_pwd}/git/intel_uboot/arch/arm/dts/socfpga_arria10_socdk_sdmmc_handoff.h"
 untar_gcc:
   tool: untar
   src_file: TOOLS/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf.tar.xz
@@ -47,7 +47,7 @@ run_uboot_gen:
     sequential:
       make:
         src_dir: git/intel_uboot
-        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/arm-none-linux-gnueabihf- ARCH=arm socfpga_arria10_hanpilot_defconfig"
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/arm-none-linux-gnueabihf- ARCH=arm socfpga_arria10_defconfig"
 run_uboot_build:
   tool: builder
   run_uboot_build:
@@ -61,7 +61,7 @@ run_local_mkimage_command:
     sequential:
       script:
         file: "{_pwd}/git/intel_uboot/tools/mkimage"
-        args: "-E -f {_pwd}/git/intel_uboot/board/terasic/arria10-hanpilot/fit_spl_fpga.its {_pwd}/BOOTFS/fit_spl_fpga.itb"
+        args: "-E -f {_pwd}/git/intel_uboot/board/altera/arria10-socdk/fit_spl_fpga.its {_pwd}/BOOTFS/fit_spl_fpga.itb"
 copy_uboot:
   tool: copy
   src_dir: git/intel_uboot/u-boot.img
