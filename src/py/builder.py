@@ -37,12 +37,6 @@ import threading
 import re
 import time
 
-try:
-  import progressbar
-except ImportError:
-  print("REQUIREMENT MISSING: progressbar2, pip install progressbar2")
-  exit(0)
-
 logger = logging.getLogger(__name__)
 
 class bob:
@@ -204,10 +198,6 @@ class bob:
 
       self._project_name = project
 
-      bar_thread = threading.Thread(target=self._bar_thread, name="bar")
-
-      bar_thread.start()
-
       for run_type, commands in run_types.items():
         if run_type == 'concurrent':
           for command_list in commands:
@@ -239,8 +229,6 @@ class bob:
 
         else:
           raise Exception(f"RUN_TYPE {run_type} is not a valid selection")
-
-      bar_thread.join()
 
   def _subprocess(self, list_of_commands):
     exec_path = str(pathlib.Path.cwd())
@@ -306,23 +294,4 @@ class bob:
         p.terminate()
 
     logger.error(f"Build failed, terminated subprocess and program. {str(args.exc_value)}")
-
-  def _bar_thread(self):
-    status = "BUILDING"
-    bar = progressbar.ProgressBar(widgets=[progressbar.Timer(format=' [%(elapsed)s] '), progressbar.Percentage(), " ", progressbar.GranularBar(markers='.#', left='[', right='] '), progressbar.Variable('Status'), " | ", progressbar.Variable('Target')], max_value=self._items).start()
-
-    bar.update(Status=f"{status:^8}")
-
-    while((self._items_done < self._items) and (self._failed == False)):
-      time.sleep(0.1)
-      bar.update(Target=f"{self._project_name:<64}")
-      bar.update(self._items_done)
-
-    if self._failed:
-      status = "ERROR"
-    else:
-      status = "SUCCESS"
-
-    bar.update(Status=f"{status:^8}")
-    bar.finish(dirty=self._failed)
 
