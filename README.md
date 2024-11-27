@@ -1,5 +1,8 @@
 # AFRL Util FPGA Binary gen
 ### Base for system boot file generation.
+
+![image](img/AFRL.png)
+
 ---
 
    author: Jay Convertino   
@@ -12,41 +15,59 @@
    
 ---
 
-### Version
+### VERSION
 #### Current
   - V0.0.0 - initial release
 
 #### Previous
   - none
-### Dependencies
-#### Build
 
-### Usage
-Uses the python script named parse_and_gen.py to injest and execute commands based on yaml files. These yaml files describe how to build boot bninaries for the target platform. At the moment this targets SDCARDS. Future would add FLASH memory. This script will be copied to the root of your build. The python file will generate the boot files in a folder named BOOTFS. The BOOTFS folder contains all build outputs used in the process of generating its final files.
+### USAGE
+Uses the python script named parse_and_gen.py to injest and execute commands based on yaml files. These yaml files describe how to build boot binaries for the target platform. At the moment this targets SDCARDS. Future would add FLASH memory. This script will be copied to the root of your build. The python file will generate the boot files in a folder named BOOTFS. The BOOTFS folder contains all build outputs used in the process of generating its final files.
 
 These systems use uboot for system startup, they also generate any needed first stage boot loads from uboot of their own custom tools.
 
 #### Example
 Simply add the below for your development board and the post hooks with automatically be added to your build and executed.
+
 ```
 depend:
       - AFRL:utility:xilinx_zcu102_boot_gen:1.0.0
 ```
 
-### Cores
-  - AFRL:utility:terasic_hanpilot_boot_gen:1.0.0 : Hanpilot SDCARD boot generator
-  - AFRL:utility:zynqmp_boot_gen:1.0.0 : Base files used for ZynqMP devices.
-  - AFRL:utility:arria10_boot_gen:1.0.0 : Base files used for Arria10 devices.
-  - AFRL:utility:zynq_boot_gen:1.0.0 : Base files used for Zynq7 devices
-  - AFRL:utility:digilent_zed_boot_gen:1.0.0 : Zedboard uboot generation target
-  - AFRL:utility:intel_a10soc_boot_gen:1.0.0 : a10soc uboot generation target
-  - AFRL:utility:xilinx_zc702_boot_gen:1.0.0 : zc702 uboot generation target
-  - AFRL:utility:xilinx_zc706_boot_gen:1.0.0 : zc706 uboot generation target
-  - AFRL:utility:xilinx_vc707_boot_gen:1.0.0 : vc707 untested generation target
-  - AFRL:utility:xilinx_zcu102_boot_gen:1.0.0 : zcu102 uboot generation target
-  - AFRL:utility:xilinx_kc705_boot_gen:1.0.0 : kc705 untested generation target
+### CORES
+Only include needed is the AFRL:utility:*_boot_gen:X.X.X core. See example above.
 
-### Folders
+- name: AFRL:utility:terasic_hanpilot_boot_gen:1.0.0
+  - description: Contains yaml file for build instructions
+- name: AFRL:utility:zynqmp_boot_gen:1.0.0
+  - description: Generate boot.bin for zynqmp platforms, do not use outside of a specified platform generator.
+- name: AFRL:utility:arria10_boot_gen:1.0.0
+  - description: Generate boot.bin for arria10 platforms.
+- name: AFRL:utility:python_build_tool:1.0.0
+  - description: Python build tools for various FPGA related binaries.
+- name: AFRL:utility:vexriscv_boot_gen:1.0.0
+  - description: Generate boot.bin for Vexriscv platforms.
+- name: AFRL:utility:zynq_boot_gen:1.0.0
+  - description: Generate boot.bin for zynq platforms.
+- name: AFRL:utility:digilent_zed_boot_gen:1.0.0
+  - description: Git pull fsbl and uboot, generate elf files, and copy to BOOTFS folder in build.
+- name: AFRL:utility:digilent_vexriscv_nexys_boot_gen:1.0.0
+  - description: Git pull fsbl and uboot, generate elf files, and copy to BOOTFS folder in build.
+- name: AFRL:utility:intel_a10soc_boot_gen:1.0.0
+  - description: Contains yaml file for build instructions
+- name: AFRL:utility:xilinx_zc702_boot_gen:1.0.0
+  - description: Git pull fsbl and uboot, generate elf files, and copy to BOOTFS folder in build.
+- name: AFRL:utility:xilinx_zc706_boot_gen:1.0.0
+  - description: Git pull fsbl and uboot, generate elf files, and copy to BOOTFS folder in build.
+- name: AFRL:utility:xilinx_vc707_boot_gen:1.0.0
+  - description: Files to help generate base vc707 board items
+- name: AFRL:utility:xilinx_zcu102_boot_gen:1.0.0
+  - description: Contains yaml file for build instructions
+- name: AFRL:utility:xilinx_kc705_boot_gen:1.0.0
+  - description: Files to help generate base kc705 board items
+
+### FOLDERS
   - digilent : Contains yaml file and core for generating boot artifacts targeting digilent development boards.
   - intel : Contains yaml file and core for generating boot artifacts targeting intel development boards.
   - src : Contains common scripts, and cores for various platform boot file generation.
