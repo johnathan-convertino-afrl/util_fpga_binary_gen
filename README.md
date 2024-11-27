@@ -22,10 +22,31 @@
 #### Previous
   - none
 
+### DEPENDENCIES
+#### ALL
+  - python3
+    - PyYAML
+  - fusesoc
+  - make
+  - genimage
+  - mkimage
+
+#### Xilinx
+  - vivado
+  - xsct
+  - bootgen
+
+#### Intel
+  - quartus_cpf
+
 ### USAGE
 Uses the python script named parse_and_gen.py to injest and execute commands based on yaml files. These yaml files describe how to build boot binaries for the target platform. At the moment this targets SDCARDS. Future would add FLASH memory. This script will be copied to the root of your build. The python file will generate the boot files in a folder named BOOTFS. The BOOTFS folder contains all build outputs used in the process of generating its final files.
 
 These systems use uboot for system startup, they also generate any needed first stage boot loads from uboot of their own custom tools.
+
+The main output of this is uboot. This will also include security features and other applications typically stored on a sdcard in a FAT32 partition.
+
+An older GCC version is downloaded from a zip archive and compiled on the target system. This is done since newer versions of GCC will not compile uboot from 2020 (intel) and 2022 (xilinx).
 
 #### Example
 Simply add the below for your development board and the post hooks with automatically be added to your build and executed.
@@ -73,4 +94,3 @@ Only include needed is the AFRL:utility:*_boot_gen:X.X.X core. See example above
   - src : Contains common scripts, and cores for various platform boot file generation.
   - terasic : Contains yaml file and core for generating boot artifacts targeting terasic development boards.
   - xilinx : Contains yaml file and core for generating boot artifacts targeting xilinx development boards.
-
