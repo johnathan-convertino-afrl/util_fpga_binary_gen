@@ -49,7 +49,7 @@ The main output of this is uboot. This will also include security features and o
 An older GCC version is downloaded from a zip archive and compiled on the target system. This is done since newer versions of GCC will not compile uboot from 2020 (intel) and 2022 (xilinx).
 
 #### Example
-Simply add the below for your development board and the post hooks with automatically be added to your build and executed.
+Simply add the below for your development board and the post hooks will automatically be added to your build and executed.
 
 ```
 depend:
