@@ -26,10 +26,13 @@
 #### ALL
   - python3
     - PyYAML
+    - system_builder
   - fusesoc
   - make
   - genimage
   - mkimage
+  - bison
+  - flex
 
 #### Xilinx
   - vivado

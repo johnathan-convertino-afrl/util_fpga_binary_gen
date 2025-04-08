@@ -28,7 +28,6 @@ mkimage:
 make:
   cmd_1: ["make", "-C", "{src_dir}", "{args}"]
 xilinx_bootgen:
-  cmd_1: ["cd", "{exec_dir}"]
-  cmd_2: ["bootgen", "-image", "{src_file}", "-arch", "{arch}", "-o", "{dest_file}"]
+  cmd_1: ["__CWD__{_pwd}/{path}/", "bootgen", "-image", "{src_file}", "-arch", "{arch}", "-o", "{dest_file}"]
 quartus_cpf:
   cmd_1: ["quartus_cpf", "-c", "--hps", "-o", "bitstream_compression=on", "{sof_file}", "{rbf_name}"]

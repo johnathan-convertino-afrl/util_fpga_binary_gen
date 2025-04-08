@@ -55,6 +55,6 @@ run_boot_binary_gen:
     sequential:
       xilinx_bootgen:
         arch: zynq
-        exec_dir: BOOTFS
+        path: BOOTFS
         src_file: bootbin.bif
         dest_file: BOOT.bin

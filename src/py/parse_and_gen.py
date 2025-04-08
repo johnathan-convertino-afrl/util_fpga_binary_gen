@@ -36,7 +36,6 @@ import sys
 import tarfile
 import argparse
 import logging
-import builder
 import time
 
 logger = logging.getLogger()
@@ -47,6 +46,14 @@ try:
 except ImportError:
   print("REQUIREMENT MISSING: gitpython, pip install gitpython")
   exit(0)
+
+# check for system builder
+try:
+  from system.builder import *
+except ImportError:
+  print("REQUIREMENT MISSING: system_builder, pip install system_builder")
+  exit(0)
+
 
 def main():
   args = parse_args(sys.argv[1:])
@@ -167,18 +174,32 @@ def untar(value):
 
 
 def run_builder(yaml_data):
-  bob = builder.bob("build_cmds.yml", yaml_data, None, False)
+  cmd_compiler = commandCompiler(yaml_commands = "commands.yml")
+
+  cmd_compiler.setProjectsWithYamlData(yaml_data)
 
   try:
-    bob.run()
+    cmd_compiler.create()
+  except Exception as e:
+    time.sleep(1)
+    print(str(e))
+    print("\n" + f"ERROR: build system failure, for details, see log file log/{os.path.basename(logger.handlers[0].baseFilename)}")
+    exit(~0)
+
+  projects = cmd_compiler.getResult()
+
+  cmd_exec = commandExecutor(projects, progressbar = False)
+
+  try:
+    cmd_exec.runProject()
   except KeyboardInterrupt:
-    bob.stop()
+    cmd_exec.stop()
     time.sleep(1)
     print("\n" + f"Build interrupted with CTRL+C.")
     exit(~0)
   except Exception as e:
-    logger.error(str(e))
     time.sleep(1)
+    print(str(e))
     print("\n" + f"ERROR: build system failure, for details, see log file log/{os.path.basename(logger.handlers[0].baseFilename)}")
     exit(~0)
 

@@ -7,8 +7,7 @@ filesets:
   src:
     files:
       - py/parse_and_gen.py: { file_type: user, copyto: . }
-      - py/builder.py: {file_type: user, copyto: .}
-      - py/build_cmds.yml: {file_type: user, copyto: .}
+      - py/commands.yml: {file_type: user, copyto: .}
     
 targets:
   default:
