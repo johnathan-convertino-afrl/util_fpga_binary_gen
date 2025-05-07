@@ -1,0 +1,60 @@
+find_and_move_bitfile:
+  tool: find_and_move
+  src_file: "*.bit"
+  dest_file: BOOTFS/system.bit
+run_gen_scripts:
+  tool: builder
+  run_gen:
+    sequential:
+      vivado_tcl:
+        tcl_file: export_xsa.tcl
+      xsct_tcl:
+        tcl_file: zynq_fsbl_gen.tcl
+      mkimage:
+        arch: ARM
+        src_file: BOOTFS/BOOT.cmd
+        dest_file: BOOTFS/BOOT.scr
+copy_fsbl:
+  tool: copy
+  src_dir: vitis/zynq/zynq_fsbl/fsbl.elf
+  dest_dir: BOOTFS/fsbl.elf
+git_uboot:
+  tool: git_pull
+  repo_url: https://github.com/analogdevicesinc/u-boot-xlnx.git
+  repo_dir: git/ad_xilinx_uboot
+  tag: master
+untar_gcc:
+  tool: untar
+  src_file: TOOLS/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf.tar.xz
+  dest_dir: TOOLS/
+find_and_move_dir:
+  tool: find_and_move
+  src_file: TOOLS/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf
+  dest_file: TOOLS/gcc
+run_make_setup_uboot:
+  tool: builder
+  run_make_setup_uboot:
+    sequential:
+      make:
+        src_dir: git/ad_xilinx_uboot
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/arm-none-linux-gnueabihf- zynq_adrv9361_defconfig"
+run_make_build_uboot:
+  tool: builder
+  run_make_uboot:
+    sequential:
+      make:
+        src_dir: git/ad_xilinx_uboot
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/arm-none-linux-gnueabihf-"
+copy_uboot:
+  tool: copy
+  src_dir: git/ad_xilinx_uboot/u-boot
+  dest_dir: BOOTFS/u-boot.elf
+run_boot_binary_gen:
+  tool: builder
+  run_boot_gen:
+    sequential:
+      xilinx_bootgen:
+        arch: zynq
+        path: BOOTFS
+        src_file: bootbin.bif
+        dest_file: BOOT.bin
