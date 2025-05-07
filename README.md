@@ -90,8 +90,11 @@ Only include needed is the AFRL:utility:*_boot_gen:X.X.X core. See example above
   - description: Contains yaml file for build instructions
 - name: AFRL:utility:xilinx_kc705_boot_gen:1.0.0
   - description: Files to help generate base kc705 board items
+- name: AFRL:utility:ad_adrv9361-z7035_boot_gen:1.0.0
+  - description: Git pull fsbl and uboot, generate elf files, and copy to BOOTFS folder in build.
 
 ### FOLDERS
+  - ad : Contains yaml file and core for gnerating boot artifacts targeting ad development boards.
   - digilent : Contains yaml file and core for generating boot artifacts targeting digilent development boards.
   - intel : Contains yaml file and core for generating boot artifacts targeting intel development boards.
   - src : Contains common scripts, and cores for various platform boot file generation.
