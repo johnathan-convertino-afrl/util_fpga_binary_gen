@@ -163,12 +163,6 @@ def untar(value):
 
   comp_file = None
 
-  found = sorted(pathlib.Path().glob(dest_dir))
-
-  if len(found) != 0:
-    logger.info(f"Untart skipped {dest_dir} exists")
-    return
-
   # open file
   try:
     comp_file = tarfile.open(src_file)
