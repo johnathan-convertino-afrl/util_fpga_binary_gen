@@ -146,7 +146,12 @@ def find_and_move(value):
 
   files_found = sorted(pathlib.Path().glob(src_file))
 
-  if len(files_found) == 0: raise
+  if len(files_found) == 0:
+    files_found = sorted(pathlib.Path().glob(dest_file))
+    if len(files_found) != 0:
+      logger.info(f"File {dest_file} already exists, move skipped")
+      return
+    raise
 
   logger.info(f"Moving {src_file} to {dest_file}")
 
@@ -157,6 +162,12 @@ def untar(value):
   dest_dir   = value['dest_dir']
 
   comp_file = None
+
+  found = sorted(pathlib.Path().glob(dest_dir))
+
+  if len(found) != 0:
+    logger.info(f"Untart skipped {dest_dir} exists")
+    return
 
   # open file
   try:
