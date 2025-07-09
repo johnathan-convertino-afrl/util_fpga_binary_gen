@@ -60,7 +60,7 @@ run_make_build_uboot:
     sequential:
       make:
         src_dir: git/xilinx_uboot
-        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/aarch64-none-linux-gnu- DEVICE_TREE=zynqmp-zcu102-rev1.0"
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/aarch64-none-linux-gnu- DEVICE_TREE=zynqmp-zcu111-revA"
 copy_uboot:
   tool: copy
   src_dir: git/xilinx_uboot/u-boot.elf
