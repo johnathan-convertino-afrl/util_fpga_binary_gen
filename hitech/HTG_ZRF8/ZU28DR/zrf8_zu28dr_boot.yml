@@ -1,0 +1,80 @@
+find_and_move_bitfile:
+  tool: find_and_move
+  src_file: "*.bit"
+  dest_file: BOOTFS/system.bit
+run_gen_scripts:
+  tool: builder
+  run_gen:
+    sequential:
+      vivado_tcl:
+        tcl_file: export_xsa.tcl
+      xsct_tcl:
+        tcl_file: zynqmp_fsbl_gen.tcl
+      mkimage:
+        arch: arm64
+        src_file: BOOTFS/BOOT.cmd
+        dest_file: BOOTFS/BOOT.scr
+copy_fsbl:
+  tool: copy
+  src_dir: vitis/zynqmp/zynqmp_fsbl/fsbl_a53.elf
+  dest_dir: BOOTFS/fsbl.elf
+copy_pmufw:
+  tool: copy
+  src_dir: vitis/zynqmp/zynqmp_pmufw/pmufw.elf
+  dest_dir: BOOTFS/pmufw.elf
+git_atf:
+  tool: git_pull
+  repo_url: https://github.com/Xilinx/arm-trusted-firmware.git
+  repo_dir: git/xilinx_atf
+  tag: xilinx-v2022.2
+git_uboot:
+  tool: git_pull
+  repo_url: https://github.com/Xilinx/u-boot-xlnx.git
+  repo_dir: git/xilinx_uboot
+  tag: xilinx-v2022.2
+untar_gcc:
+  tool: untar
+  src_file: TOOLS/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu.tar.xz
+  dest_dir: TOOLS/
+find_and_move_dir:
+  tool: find_and_move
+  src_file: TOOLS/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu
+  dest_file: TOOLS/gcc
+run_make_build_atf:
+  tool: builder
+  run_make_atf:
+    sequential:
+      make:
+        src_dir: git/xilinx_atf
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/aarch64-none-linux-gnu- DEBUG=0 PLAT=zynqmp RESET_TO_BL31=1 bl31"
+run_make_setup_uboot:
+  tool: builder
+  run_make_setup_uboot:
+    sequential:
+      make:
+        src_dir: git/xilinx_uboot
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/aarch64-none-linux-gnu- xilinx_zynqmp_virt_defconfig"
+run_make_build_uboot:
+  tool: builder
+  run_make_uboot:
+    sequential:
+      make:
+        src_dir: git/xilinx_uboot
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/aarch64-none-linux-gnu- DEVICE_TREE=zynqmp-zcu102-rev1.0"
+copy_uboot:
+  tool: copy
+  src_dir: git/xilinx_uboot/u-boot.elf
+  dest_dir: BOOTFS/u-boot.elf
+copy_atf:
+  tool: copy
+  src_dir: git/xilinx_atf/build/zynqmp/release/bl31/bl31.elf
+  dest_dir: BOOTFS/bl31.elf
+run_boot_binary_gen:
+  tool: builder
+  run_boot_gen:
+    sequential:
+      xilinx_bootgen:
+        arch: zynqmp
+        path: BOOTFS
+        src_file: bootbin.bif
+        dest_file: BOOT.bin
