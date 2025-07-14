@@ -1,0 +1,17 @@
+CAPI=2:
+
+name: AFRL:utility:xilinx_zcu111_boot_gen:1.0.0
+description: Contains yaml file for build instructions
+
+filesets:
+  src:
+    files:
+      - zcu111_boot.yml : {file_type: user, copyto: ./BOOTFS/bootfs.yml}
+
+  dep:
+    depend:
+      - AFRL:utility:zynqmp_boot_gen:1.0.0
+
+targets:
+  default: &default
+    filesets: [src, dep]
