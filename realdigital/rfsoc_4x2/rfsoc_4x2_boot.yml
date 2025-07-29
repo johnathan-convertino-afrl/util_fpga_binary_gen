@@ -68,7 +68,7 @@ run_make_build_uboot:
     sequential:
       make:
         src_dir: git/xilinx_uboot
-        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/aarch64-none-linux-gnu- DEVICE_TREE=zynqmp-rfsoc-4x2
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/aarch64-none-linux-gnu- DEVICE_TREE=zynqmp-rfsoc-4x2"
 copy_uboot:
   tool: copy
   src_dir: git/xilinx_uboot/u-boot.elf
