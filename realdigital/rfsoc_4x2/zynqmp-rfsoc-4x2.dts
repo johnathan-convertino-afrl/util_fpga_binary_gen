@@ -32,7 +32,7 @@
   };
 
   chosen {
-    bootargs = "earlycon console=ttyPS0,115200 console=tty0 clk_ignore_unused root=/dev/mmcblk0p2 rw";
+    bootargs = "earlycon";
     stdout-path = "serial0:115200n8";
   };
 
@@ -52,12 +52,6 @@
     #clock-cells = <0x00>;
     clock-frequency = <26000000>;
   };
-};
-
-&psgtr {
-    /* dp 0-1, usb0, usb1 */
-    clocks = <&usb_clk>, <&dp_clk>;
-    clock-names = "ref0", "ref1";
 };
 
 &gem1 {
@@ -125,5 +119,5 @@
 };
 
 &uart1 {
-	status = "okay";
+  status = "okay";
 };
