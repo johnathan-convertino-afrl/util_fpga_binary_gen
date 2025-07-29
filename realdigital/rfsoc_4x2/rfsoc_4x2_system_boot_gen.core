@@ -1,0 +1,18 @@
+CAPI=2:
+
+name: AFRL:utility:realdigital_rfsoc_4x2_boot_gen:1.0.0
+description: Contains yaml file for build instructions
+
+filesets:
+  src:
+    files:
+      - rfsoc_4x2_boot.yml   : {file_type: user, copyto: ./BOOTFS/bootfs.yml}
+      - zynqmp-rfsoc-4x2.dts : {file_type: user, copyto: ./BOOTFS/}
+      - Makefile.new         : {file_type: user, copyto: ./BOOTFS/}
+  dep:
+    depend:
+      - AFRL:utility:zynqmp_boot_gen:1.0.0
+
+targets:
+  default: &default
+    filesets: [src, dep]
