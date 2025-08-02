@@ -1,0 +1,25 @@
+CAPI=2:
+
+name: AFRL:utility:cycloneV_boot_gen:1.0.0
+description: Generate boot.bin for cycloneV platforms.
+
+filesets:
+  src:
+    files:
+      - uboot_scr/cycloneV/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
+      - gcc/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf.tar.xz : {file_type: user, copyto: ./TOOLS/}
+
+  dep:
+    depend:
+      - AFRL:utility:python_build_tool:1.0.0
+    
+targets:
+  default:
+    description: Script to generate BOOTFS files
+    filesets: [src, dep]
+    hooks:
+      post_build: ["tool_quartus ? (parse_and_gen)"]
+
+scripts:
+  parse_and_gen:
+    cmd : [python3, parse_and_gen.py, ./BOOTFS/bootfs.yml]
