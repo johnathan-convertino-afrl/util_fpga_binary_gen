@@ -7,7 +7,7 @@ run_gen_scripts:
   run_gen:
     sequential:
       mkimage:
-        arch: ARM
+        arch: RISCV
         src_file: BOOTFS/BOOT.cmd
         dest_file: BOOTFS/BOOT.scr
 git_uboot:
@@ -39,8 +39,8 @@ run_make_build_uboot:
         args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/riscv32-unknown-linux-gnu-"
 copy_uboot:
   tool: copy
-  src_dir: git/veronica_uboot/u-boot.elf
-  dest_dir: BOOTFS/u-boot.elf
+  src_dir: git/veronica_uboot/u-boot.bin
+  dest_dir: BOOTFS/u-boot.bin
 git_opensbi:
   tool: git_pull
   repo_url: https://github.com/riscv-software-src/opensbi.git
@@ -55,5 +55,5 @@ run_make_build_opensbi:
         args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/riscv32-unknown-linux-gnu- PLATFORM=generic FW_OPTIONS=0 FW_TEXT_START=0x80000000 FW_PAYLOAD_PATH={_pwd}git/veronica_uboot/u-boot.bin FW_FDT_PATH={_pwd}/git/veronica_uboot/arch/riscv/dts/afrl_veronica.dtb"
 copy_payload:
   tool: copy
-  src_dir: git/opensbi/build/platform/generic/firmware/fw_playform.bin
-  dest_dir: BOOTFS/platform.bin
+  src_dir: git/opensbi/build/platform/generic/firmware/fw_jump.bin
+  dest_dir: BOOTFS/opensbi.bin
