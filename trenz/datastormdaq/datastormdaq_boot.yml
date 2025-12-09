@@ -1,14 +1,18 @@
 find_and_move_sof:
   tool: find_and_move
   src_file: "output_files/*.sof"
-  dest_file: output_files/datastromdaq.sof
+  dest_file: output_files/quartus_bit.sof
 run_gen:
   tool: builder
   run_gen:
     sequential:
-      quartus_cpf:
-        sof_file: output_files/datastromdaq.sof
-        rbf_name: output_files/datastromdaq.rbf
+      quartus_cpf_c5:
+        sof_file: output_files/quartus_bit.sof
+        rbf_name: output_files/quartus_bit.rbf
+      copy_rbf:
+        tool: copy
+        src_dir: output_files/quartus_bit.rbf
+        dest_dir: BOOTFS/quartus_bit.rbf
       mkimage:
         arch: ARM
         src_file: BOOTFS/BOOT.cmd
@@ -17,22 +21,14 @@ git_uboot:
   tool: git_pull
   repo_url: https://github.com/johnathan-convertino-afrl/u-boot-socfpga.git
   repo_dir: git/intel_uboot
-  tag: socfpga_v2020.07
-copy_rbf_periph:
-  tool: copy
-  src_dir: output_files/datastromdaq.periph.rbf
-  dest_dir: git/intel_uboot/datastromdaq.periph.rbf
-copy_rbf_core:
-  tool: copy
-  src_dir: output_files/datastromdaq.core.rbf
-  dest_dir: git/intel_uboot/datastromdaq.core.rbf
+  tag: socfpga_v2023.10
 run_filter_script:
   tool: builder
-  run_filter:
+  run_gen:
     sequential:
-      script:
-        file: "{_pwd}/git/intel_uboot/arch/arm/mach-socfpga/qts-filter-a10.sh"
-        args: "{_pwd}/hps_isw_handoff/hps.xml {_pwd}/git/intel_uboot/arch/arm/dts/socfpga_datastromdaq_socdk_sdmmc_handoff.h"
+      py_script:
+        file: "{_pwd}/git/intel_uboot/arch/arm/mach-socfpga/cv_bsp_generator/cv_bsp_generator.py"
+        args: "-i {_pwd}/hps_isw_handoff/system_ps_wrapper_sys_hps/ {_pwd}/git/u-boot-socfpga/board/altera/cyclone5-socdk/qts/"
 untar_gcc:
   tool: untar
   src_file: TOOLS/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf.tar.xz
@@ -47,7 +43,7 @@ run_uboot_gen:
     sequential:
       make:
         src_dir: git/intel_uboot
-        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/arm-none-linux-gnueabihf- ARCH=arm socfpga_cycloneV_datastromdaq_defconfig"
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/arm-none-linux-gnueabihf- ARCH=arm socfpga_cyclone5_defconfig"
 run_uboot_build:
   tool: builder
   run_uboot_build:
@@ -55,13 +51,6 @@ run_uboot_build:
       make:
         src_dir: git/intel_uboot
         args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/arm-none-linux-gnueabihf- ARCH=arm"
-run_local_mkimage_command:
-  tool: builder
-  run_local_mkimage:
-    sequential:
-      script:
-        file: "{_pwd}/git/intel_uboot/tools/mkimage"
-        args: "-E -f {_pwd}/git/intel_uboot/board/terasic/cycloneV-datastromdaq/fit_spl_fpga.its {_pwd}/BOOTFS/fit_spl_fpga.itb"
 copy_uboot:
   tool: copy
   src_dir: git/intel_uboot/u-boot.img

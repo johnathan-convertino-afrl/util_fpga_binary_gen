@@ -1,12 +1,12 @@
 CAPI=2:
 
-name: AFRL:utility:cycloneV_boot_gen:1.0.0
+name: AFRL:utility:cyclonev_boot_gen:1.0.0
 description: Generate boot.bin for cycloneV platforms.
 
 filesets:
   src:
     files:
-      - uboot_scr/cycloneV/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
+      - uboot_scr/cyclonev/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
       - gcc/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf.tar.xz : {file_type: user, copyto: ./TOOLS/}
 
   dep:
