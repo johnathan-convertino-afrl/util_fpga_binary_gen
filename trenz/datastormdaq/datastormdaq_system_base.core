@@ -10,7 +10,7 @@ filesets:
 
   dep:
     depend:
-      - AFRL:utility:cycloneV_boot_gen:1.0.0
+      - AFRL:utility:cyclonev_boot_gen:1.0.0
 
 targets:
   default:

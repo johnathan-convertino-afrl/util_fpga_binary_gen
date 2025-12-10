@@ -9,17 +9,17 @@ run_gen:
       quartus_cpf_c5:
         sof_file: output_files/quartus_bit.sof
         rbf_name: output_files/quartus_bit.rbf
-      copy_rbf:
-        tool: copy
-        src_dir: output_files/quartus_bit.rbf
-        dest_dir: BOOTFS/quartus_bit.rbf
       mkimage:
         arch: ARM
         src_file: BOOTFS/BOOT.cmd
         dest_file: BOOTFS/BOOT.scr
+copy_rbf:
+  tool: copy
+  src_dir: output_files/quartus_bit.rbf
+  dest_dir: BOOTFS/quartus_bit.rbf
 git_uboot:
   tool: git_pull
-  repo_url: https://github.com/johnathan-convertino-afrl/u-boot-socfpga.git
+  repo_url: https://github.com/altera-opensource/u-boot-socfpga.git
   repo_dir: git/intel_uboot
   tag: socfpga_v2023.10
 run_filter_script:

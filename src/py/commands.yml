@@ -17,7 +17,7 @@ buildroot:
 script:
   cmd_1: ["{file}", "{args}"]
 py_script:
-  cmd_1: ["python", "{file}", "{args}"]
+  cmd_1: ["python3", "{file}", "{args}"]
 genimage:
   cmd_1: ["mkdir", "-p", "{_pwd}/output/genimage/tmp/{_project_name}"]
   cmd_2: ["genimage", "--config", "{path}/{_project_name}.cfg"]
