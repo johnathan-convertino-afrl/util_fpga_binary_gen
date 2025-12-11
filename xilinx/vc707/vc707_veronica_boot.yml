@@ -29,7 +29,7 @@ run_make_setup_uboot:
     sequential:
       make:
         src_dir: git/veronica_uboot
-        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/riscv32-unknown-linux-gnu- afrl_nexys_veronica_defconfig"
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/riscv32-unknown-linux-gnu- afrl_vc707_veronica_defconfig"
 run_make_build_uboot:
   tool: builder
   run_make_uboot:
@@ -52,7 +52,7 @@ run_make_build_opensbi:
     sequential:
       make:
         src_dir: git/opensbi
-        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/riscv32-unknown-linux-gnu- PLATFORM=generic FW_OPTIONS=0 FW_TEXT_START=0x80000000 FW_PAYLOAD_PATH={_pwd}/git/veronica_uboot/u-boot.bin FW_FDT_PATH={_pwd}/git/veronica_uboot/arch/riscv/dts/afrl_nexys_veronica.dtb"
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/riscv32-unknown-linux-gnu- PLATFORM=generic FW_OPTIONS=0 FW_TEXT_START=0x80000000 FW_PAYLOAD_PATH={_pwd}/git/veronica_uboot/u-boot.bin FW_FDT_PATH={_pwd}/git/veronica_uboot/arch/riscv/dts/afrl_vc707_veronica.dtb"
 copy_payload:
   tool: copy
   src_dir: git/opensbi/build/platform/generic/firmware/fw_jump.bin
