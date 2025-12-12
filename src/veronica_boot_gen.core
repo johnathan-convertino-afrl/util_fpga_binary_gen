@@ -1,14 +1,13 @@
 CAPI=2:
 
-name: AFRL:utility:vexriscv_boot_gen:1.0.0
-description: Generate boot.bin for Vexriscv platforms.
+name: AFRL:utility:veronica_boot_gen:1.0.0
+description: Generate boot.bin for veronica vexriscv platforms.
 
 filesets:
   src:
     files:
-      - tcl/export_xsa.tcl: { file_type: user, copyto: . }
-      - tcl/xparam_header_gen.tcl: { file_type: user, copyto: .}
-      - uboot_scr/zynq/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
+      - uboot_scr/veronica/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
+      - gcc/gcc-riscv32-15.1-2025-x86_64-riscv32-unknown-linux-gnu.tar.xz : {file_type: user, copyto: ./TOOLS/}
     
   dep:
     depend:

@@ -1,0 +1,59 @@
+find_and_move_bitfile:
+  tool: find_and_move
+  src_file: "*.bit"
+  dest_file: BOOTFS/system.bit
+run_gen_scripts:
+  tool: builder
+  run_gen:
+    sequential:
+      mkimage:
+        arch: RISCV
+        src_file: BOOTFS/BOOT.cmd
+        dest_file: BOOTFS/BOOT.scr
+git_uboot:
+  tool: git_pull
+  repo_url: https://github.com/johnathan-convertino-afrl/u-boot-veronica.git
+  repo_dir: git/veronica_uboot
+  tag: master
+untar_gcc:
+  tool: untar
+  src_file: TOOLS/gcc-riscv32-15.1-2025-x86_64-riscv32-unknown-linux-gnu.tar.xz
+  dest_dir: TOOLS/
+find_and_move_dir:
+  tool: find_and_move
+  src_file: TOOLS/gcc-riscv32-15.1-2025-x86_64-riscv32-unknown-linux-gnu
+  dest_file: TOOLS/gcc
+run_make_setup_uboot:
+  tool: builder
+  run_make_setup_uboot:
+    sequential:
+      make:
+        src_dir: git/veronica_uboot
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/riscv32-unknown-linux-gnu- afrl_kc705_veronica_defconfig"
+run_make_build_uboot:
+  tool: builder
+  run_make_uboot:
+    sequential:
+      make:
+        src_dir: git/veronica_uboot
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/riscv32-unknown-linux-gnu-"
+copy_uboot:
+  tool: copy
+  src_dir: git/veronica_uboot/u-boot.bin
+  dest_dir: BOOTFS/u-boot.bin
+git_opensbi:
+  tool: git_pull
+  repo_url: https://github.com/riscv-software-src/opensbi.git
+  repo_dir: git/opensbi
+  tag: v1.7
+run_make_build_opensbi:
+  tool: builder
+  run_make_opensbi:
+    sequential:
+      make:
+        src_dir: git/opensbi
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/riscv32-unknown-linux-gnu- PLATFORM=generic FW_OPTIONS=0 FW_TEXT_START=0x80000000 FW_PAYLOAD_PATH={_pwd}/git/veronica_uboot/u-boot.bin FW_FDT_PATH={_pwd}/git/veronica_uboot/arch/riscv/dts/afrl_kc705_veronica.dtb"
+copy_payload:
+  tool: copy
+  src_dir: git/opensbi/build/platform/generic/firmware/fw_jump.bin
+  dest_dir: BOOTFS/opensbi.bin
