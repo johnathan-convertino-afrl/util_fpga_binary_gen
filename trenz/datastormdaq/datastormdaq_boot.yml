@@ -1,34 +1,34 @@
 find_and_move_sof:
   tool: find_and_move
   src_file: "output_files/*.sof"
-  dest_file: output_files/quartus_bit.sof
+  dest_file: output_files/system_bit.sof
 run_gen:
   tool: builder
   run_gen:
     sequential:
       quartus_cpf_c5:
-        sof_file: output_files/quartus_bit.sof
-        rbf_name: output_files/quartus_bit.rbf
+        sof_file: output_files/system_bit.sof
+        rbf_name: output_files/system_bit.rbf
       mkimage:
         arch: ARM
         src_file: BOOTFS/BOOT.cmd
         dest_file: BOOTFS/BOOT.scr
 copy_rbf:
   tool: copy
-  src_dir: output_files/quartus_bit.rbf
-  dest_dir: BOOTFS/quartus_bit.rbf
+  src_dir: output_files/system_bit.rbf
+  dest_dir: BOOTFS/system_bit.rbf
 git_uboot:
   tool: git_pull
-  repo_url: https://github.com/altera-opensource/u-boot-socfpga.git
+  repo_url: https://github.com/sparkletron/u-boot-socfpga.git
   repo_dir: git/intel_uboot
-  tag: socfpga_v2023.10
+  tag: socfpga_v2022.10
 run_filter_script:
   tool: builder
   run_gen:
     sequential:
       py_script:
         file: "{_pwd}/git/intel_uboot/arch/arm/mach-socfpga/cv_bsp_generator/cv_bsp_generator.py"
-        args: "-i {_pwd}/hps_isw_handoff/system_ps_wrapper_sys_hps/ {_pwd}/git/u-boot-socfpga/board/altera/cyclone5-socdk/qts/"
+        args: "-i {_pwd}/hps_isw_handoff/system_ps_wrapper_sys_hps/ -o {_pwd}/git/intel_uboot/board/trenz/tei0022/qts/"
 untar_gcc:
   tool: untar
   src_file: TOOLS/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf.tar.xz
@@ -43,7 +43,7 @@ run_uboot_gen:
     sequential:
       make:
         src_dir: git/intel_uboot
-        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/arm-none-linux-gnueabihf- ARCH=arm socfpga_cyclone5_defconfig"
+        args: "CROSS_COMPILE={_pwd}/TOOLS/gcc/bin/arm-none-linux-gnueabihf- ARCH=arm socfpga_trenz_tei0022_defconfig"
 run_uboot_build:
   tool: builder
   run_uboot_build:

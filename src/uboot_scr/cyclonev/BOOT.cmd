@@ -2,7 +2,7 @@ setenv kernel_image zImage
 setenv kernel_load_address 0x1000000
 setenv devicetree_image devicetree.dtb
 setenv devicetree_load_address 0x2000000
-setenv fpga_bit_file quartus_bit.rbf
+setenv fpga_bit_file system_bit.rbf
 setenv fpga_load_address 0x3000000
 
 setenv bootargs 'console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait earlyprintk'
