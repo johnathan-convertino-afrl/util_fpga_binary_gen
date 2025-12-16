@@ -34,6 +34,7 @@
   - mkimage
   - bison
   - flex
+  - git lfs (to pull lfs files)
 
 #### Xilinx
   - vivado

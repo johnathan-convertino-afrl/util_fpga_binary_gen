@@ -1,0 +1,8 @@
+DNI/
+ip/
+qdb/
+*.qsys
+*.qsys.legacy
+*.qsf
+*.qpf
+*.log

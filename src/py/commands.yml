@@ -16,6 +16,8 @@ buildroot:
   cmd_4: ["make", "O={_pwd}/output/linux/{_project_name}", "-C", "{path}"]
 script:
   cmd_1: ["{file}", "{args}"]
+py_script:
+  cmd_1: ["python3", "{file}", "{args}"]
 genimage:
   cmd_1: ["mkdir", "-p", "{_pwd}/output/genimage/tmp/{_project_name}"]
   cmd_2: ["genimage", "--config", "{path}/{_project_name}.cfg"]
@@ -31,3 +33,5 @@ xilinx_bootgen:
   cmd_1: ["__CWD__{_pwd}/{path}/", "bootgen", "-image", "{src_file}", "-arch", "{arch}", "-o", "{dest_file}"]
 quartus_cpf:
   cmd_1: ["quartus_cpf", "-c", "--hps", "-o", "bitstream_compression=on", "{sof_file}", "{rbf_name}"]
+quartus_cpf_c5:
+  cmd_1: ["quartus_cpf", "-c", "{sof_file}", "{rbf_name}"]

@@ -1,0 +1,18 @@
+CAPI=2:
+
+name: AFRL:utility:trenz_datastormdaq_boot_gen:1.0.0
+description: Contains yaml file for build instructions
+
+filesets:
+  src:
+    files:
+      - datastormdaq_boot.yml : {file_type: user, copyto: ./BOOTFS/bootfs.yml}
+
+  dep:
+    depend:
+      - AFRL:utility:cyclonev_boot_gen:1.0.0
+
+targets:
+  default:
+    filesets: [src, dep]
+
