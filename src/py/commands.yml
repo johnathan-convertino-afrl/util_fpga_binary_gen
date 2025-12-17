@@ -6,6 +6,7 @@
 ##  - _pwd = current root path to the repository
 ##  - {SOMETHING} = a value to fill in from the build.yml file that describes
 ##    actions for the command
+##  - ADD -tclargs "FPGA=115-2" to the vivado_tcl command!!!
 ################################################################################
 fusesoc:
   cmd_1: ["fusesoc", "--cores-root", "{path}", "run", "--build", "--work-root", "output/hdl/{_project_name}", "--target", "{target}", "{project}"]

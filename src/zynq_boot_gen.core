@@ -8,7 +8,8 @@ filesets:
     files:
       - tcl/zynq_fsbl_gen.tcl: { file_type: user, copyto: . }
       - tcl/export_xsa.tcl: { file_type: user, copyto: . }
-      - tcl/xparam_header_gen.tcl: { file_type: user, copyto: .}
+      - tcl/xparam_header_gen.tcl: { file_type: user, copyto: . }
+      - tcl/create_mcs.tcl: { file_type: user, copyto: . }
       - uboot_scr/zynq/BOOT.cmd: { file_type: user, copyto: ./BOOTFS/}
       - bootbin/zynq/bootbin.bif : {file_type: user, copyto: ./BOOTFS/}
       - gcc/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf.tar.xz : {file_type: user, copyto: ./TOOLS/}
