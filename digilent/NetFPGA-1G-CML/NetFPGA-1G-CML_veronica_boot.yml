@@ -1,3 +1,10 @@
+gen_mcs_file:
+  tool: builder
+  run_gen:
+    sequential:
+      vivado_tcl_wargs:
+        tcl_file: create_mcs.tcl
+        tcl_args: "128 BPIx16"
 find_and_move_bitfile:
   tool: find_and_move
   src_file: "*.bit"
