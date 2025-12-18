@@ -11,6 +11,7 @@ filesets:
   dep:
     depend:
       - AFRL:utility:veronica_boot_gen:1.0.0
+      - AFRL:utility:xilinx_mcs_gen:1.0.0
 
 targets:
   default: &default
