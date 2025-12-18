@@ -1,0 +1,14 @@
+CAPI=2:
+
+name: AFRL:utility:xilinx_mcs_gen:1.0.0
+description: Generate system_bit.mcs for flash programmed devices
+
+filesets:
+  src:
+    files:
+      - tcl/create_mcs.tcl: { file_type: user, copyto: .}
+
+targets:
+  default:
+    description: Provide TCL script for MCS gen.
+    filesets: [src]

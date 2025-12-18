@@ -11,7 +11,19 @@ filesets:
   dep:
     depend:
       - AFRL:utility:veronica_boot_gen:1.0.0
+      - AFRL:utility:xilinx_mcs_gen:1.0.0
 
 targets:
   default: &default
     filesets: [src, dep]
+    
+    
+# create_hw_cfgmem -hw_device [lindex [get_hw_devices xc7vx485t_0] 0] [lindex [get_cfgmem_parts {mt28gu01gaax1e-bpi-x16}] 0]
+# set_property PROGRAM.BLANK_CHECK  0 [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_devices xc7vx485t_0] 0]]
+# set_property PROGRAM.ERASE  1 [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_devices xc7vx485t_0] 0]]
+# set_property PROGRAM.CFG_PROGRAM  1 [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_devices xc7vx485t_0] 0]]
+# set_property PROGRAM.VERIFY  1 [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_devices xc7vx485t_0] 0]]
+# set_property PROGRAM.CHECKSUM  0 [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_devices xc7vx485t_0] 0]]
+#     set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
+#     set_property BITSTREAM.CONFIG.CONFIGRATE 33 [current_design]
+#     set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
