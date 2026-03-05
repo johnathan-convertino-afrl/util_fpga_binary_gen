@@ -1,6 +1,6 @@
 CAPI=2:
 
-name: AFRL:utility:xilinx_zcu206_boot_gen:1.0.0
+name: AFRL:utility:xilinx_zcu208_boot_gen:1.0.0
 description: Contains yaml file for build instructions
 
 filesets:
